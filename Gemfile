@@ -37,6 +37,8 @@ group :development, :test do
   gem 'rubocop', '~> 0.60.0', require: false
   gem 'rubocop-rails_config'
   gem 'rubocop-rspec'
+  # solr_wrapper for using solr during testing
+  gem 'solr_wrapper', '~> 2.0'
 end
 
 group :development do
