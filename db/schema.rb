@@ -10,6 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 0) do
+ActiveRecord::Schema.define(version: 2018_11_05_190736) do
+
+  create_table "vocabularies", force: :cascade do |t|
+    t.string "label"
+    t.string "string_key", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["string_key"], name: "index_vocabularies_on_string_key", unique: true
+  end
 
 end
