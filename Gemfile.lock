@@ -88,6 +88,11 @@ GEM
     erubi (1.7.1)
     et-orbi (1.1.6)
       tzinfo
+    factory_bot (4.11.1)
+      activesupport (>= 3.0.0)
+    factory_bot_rails (4.11.1)
+      factory_bot (~> 4.11.1)
+      railties (>= 3.0.0)
     faraday (0.15.3)
       multipart-post (>= 1.2, < 3)
     ffi (1.9.25)
@@ -249,7 +254,7 @@ GEM
     thor (0.19.4)
     thread_safe (0.3.6)
     tilt (2.0.8)
-    tins (1.19.0)
+    tins (1.20.2)
     tzinfo (1.2.5)
       thread_safe (~> 0.1)
     unicode-display_width (1.4.0)
@@ -272,6 +277,7 @@ DEPENDENCIES
   capistrano-resque (~> 0.2.2)
   capistrano-rvm (~> 0.1)
   coveralls
+  factory_bot_rails
   listen (>= 3.0.5, < 3.2)
   mysql2
   puma (~> 3.11)
