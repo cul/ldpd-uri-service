@@ -11,8 +11,8 @@ describe '/api/v1/vocabularies', type: :request do
       get '/api/v1/vocabularies'
       expect(JSON.parse(response.body)).to match(
         'vocabularies' => [
-          { 'string_key' => 'subjects', 'label' => 'Subjects' },
-          { 'string_key' => 'names', 'label' => 'Names' }
+          { 'string_key' => 'subjects', 'label' => 'Subjects', 'custom_fields' => {} },
+          { 'string_key' => 'names', 'label' => 'Names', 'custom_fields' => {} }
         ]
       )
     end
@@ -23,7 +23,7 @@ describe '/api/v1/vocabularies', type: :request do
 
     it 'returns one vocabulary' do
       get '/api/v1/vocabularies/subjects'
-      expect(JSON.parse(response.body)).to match('string_key' => 'subjects', 'label' => 'Subjects')
+      expect(JSON.parse(response.body)).to match('string_key' => 'subjects', 'label' => 'Subjects', 'custom_fields' => {})
       expect(response.status).to be 200
     end
 
@@ -48,7 +48,8 @@ describe '/api/v1/vocabularies', type: :request do
       it 'returns newly created vocabulary in json' do
         expect(JSON.parse(response.body)).to match(
           'string_key' => 'collections',
-          'label' => 'Collections'
+          'label' => 'Collections',
+          'custom_fields' => {}
         )
       end
 
@@ -85,7 +86,7 @@ describe '/api/v1/vocabularies', type: :request do
       end
 
       it 'returns new vocabulary' do
-        expect(JSON.parse(response.body)).to match('string_key' => 'subjects', 'label' => 'FAST Subjects')
+        expect(JSON.parse(response.body)).to match('string_key' => 'subjects', 'label' => 'FAST Subjects', 'custom_fields' => {})
       end
 
       it 'returns 200' do
@@ -99,7 +100,7 @@ describe '/api/v1/vocabularies', type: :request do
       end
 
       it 'does not update record' do
-        expect(JSON.parse(response.body)).to match('string_key' => 'subjects', 'label' => 'Subjects')
+        expect(JSON.parse(response.body)).to match('string_key' => 'subjects', 'label' => 'Subjects', 'custom_fields' => {})
       end
 
       # not sure if this is the correct reponse code.

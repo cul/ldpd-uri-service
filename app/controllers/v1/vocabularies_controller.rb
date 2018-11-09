@@ -1,6 +1,6 @@
 module V1
   class VocabulariesController < ApplicationController
-    SHOW_FIELDS = [:string_key, :label].freeze
+    SHOW_FIELDS = [:string_key, :label, :custom_fields].freeze
 
     # GET /vocabularies
     def index
