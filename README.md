@@ -4,6 +4,8 @@
 
 URI Service makes some assumptions about how URIs should be organized. A URI is always related to a vocabulary. A vocabulary has many URI terms. Multiple authorities might be represented within a vocabulary. A URI must be unique to a vocabulary, but a URI can appear in multiple vocabularies.
 
+Vocabularies allow the addition of custom fields for all terms that are stored within its scope. Different vocabularies can define different custom fields.
+
 In order to use the JSON api, URI Service requires token authentication. URI Service does not provide granular authorization. The application that uses the api should control authorization in any way it deems necessary.
 
 ## Definitions
@@ -49,8 +51,21 @@ TODO
     "per_page": 10,
     "total_results": 2,
     "vocabularies": [
-      { "string_key": "collections" , "label": "Collections" },
-      { "string_key": "name" , "label": "Names" }
+      {
+        "string_key": "collections" ,
+        "label": "Collections",
+        "custom_fields": {}
+      },
+      {
+        "string_key": "name" ,
+        "label": "Names",
+        "custom_fields": {
+          "name_type": {
+            "label": "Name Type",
+            "data_type": "string"
+          }
+        }
+      }
     ]
   }
   ```
@@ -68,7 +83,8 @@ TODO
   ```json
   {
      "string_key": "names",
-     "label": "Names"
+     "label": "Names",
+     "custom_fields": {}
   }
   ```
 
@@ -87,7 +103,9 @@ TODO
     ```json
     {
       "string_key": "names",
-      "label": "Names"
+      "label": "Names",
+      "custom_fields": {}
+
     }
     ```
 
@@ -106,7 +124,8 @@ TODO
   ```json
   {
      "string_key": "names",
-     "label": "Names"
+     "label": "Names",
+     "custom_fields": {}
   }
   ```
 
@@ -132,6 +151,49 @@ TODO
   `OPTIONS /vocabularies/`
 - **Success Response**
   TODO
+
+### Vocabularies/Custom Fields
+#### Add Custom Field to Vocabulary
+- **Request**
+
+  `POST /vocabularies/:string_key/custom_fields`
+
+  _Required params:_ `field_key`, `label` and `data_type`
+
+- **Success Response**
+
+  _Status:_ 201
+
+  _Body:_ NOT SURE
+
+#### Update Custom Field
+- **Request**
+
+  `PATCH /vocabularies/:string_key/custom_fields/:field_key`
+
+  _Optional params:_ `label`
+
+  `field_key` and `data_type` cannot be changed after creation.
+
+- **Success Response**
+
+  _Status:_ 200
+
+  _Body:_ NOT SURE
+
+#### Delete Custom Field from Vocabulary
+- **Request**
+
+  `DELETE /vocabularies/:string_key/custom_fields/:field_key`
+
+  Deletes custom field from vocabulary object, fields within terms will not be deleted, they will just be ignored.
+
+- **Success Response**
+
+  _Status:_ 200
+
+  _Body:_ none
+
 
 ### Vocabularies/Terms
 
