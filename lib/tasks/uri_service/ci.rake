@@ -12,12 +12,6 @@ namespace :uri_service do
       spec.rspec_opts = ['--backtrace'] if ENV['CI']
     end
 
-    RSpec::Core::RakeTask.new(:rcov) do |spec|
-      spec.pattern = FileList['spec/**/*_spec.rb']
-      spec.pattern += FileList['spec/*_spec.rb']
-      spec.rcov = true
-    end
-
     require 'rubocop/rake_task'
     desc 'Run style checker'
     RuboCop::RakeTask.new(:rubocop) do |task|
@@ -75,15 +69,6 @@ namespace :uri_service do
     Rake::Task['db:create'].invoke
     Rake::Task['db:migrate'].invoke
     Rake::Task['db:seed'].invoke
-    Rake::Task['uri_service:coverage'].invoke
-  end
-
-  desc 'Execute specs with coverage'
-  task :coverage do
-    # Put spec opts in a file named .rspec in root
-    ruby_engine = defined?(RUBY_ENGINE) ? RUBY_ENGINE : 'ruby'
-    ENV['COVERAGE'] = 'true' unless ruby_engine == 'jruby'
-
     Rake::Task['uri_service:rspec'].invoke
   end
 
