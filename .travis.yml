@@ -13,5 +13,3 @@ env:
 
 before_script:
   - bundle exec rake uri_service:setup:config_files
-
-script: bundle exec rake uri_service:ci

@@ -25,51 +25,31 @@ namespace :uri_service do
   end
 
   desc 'CI build without rubocop'
-  task ci_nocop: [:environment, 'uri_service:ci_task'] do
-  end
+  task ci_nocop: [:environment, 'uri_service:ci_specs']
 
   desc 'CI build with Rubocop validation'
-  task ci: [:environment, 'uri_service:rubocop', 'uri_service:ci_task'] do
-  end
+  task ci: [:environment, 'uri_service:rubocop', 'uri_service:ci_specs']
 
-  desc 'CI setup and run'
-  task ci_task: [:environment] do
+  task ci_specs: :environment do
     start_time = Time.now
 
     ENV['RAILS_ENV'] = 'test'
     Rails.env = ENV['RAILS_ENV']
 
-    Rake::Task['uri_service:ci_solrwrapper'].invoke
-
-    puts "\n" + 'CI run finished in ' + (Time.now - start_time).to_s + ' seconds'
-  end
-
-  task ci_solrwrapper: :environment do
     puts "Unpacking and starting solr...\n"
-    solr_version = '6.3.0'
-    SolrWrapper.wrap(
-      port: 9983,
-      version: solr_version,
-      verbose: false,
-      managed: true,
-      solr_zip_path: File.join('tmp', "solr-#{solr_version}.zip"),
-      instance_dir: File.join('tmp', "solr-#{solr_version}"),
-    ) do |solr_wrapper_instance|
+    SolrWrapper.wrap do |solr_wrapper_instance|
       # Create collection
-      solr_wrapper_instance.with_collection(name: 'uri_service_test', dir: File.join('spec/fixtures', 'solr_cores/uri_service_solr6/conf')) do |collection_name|
-        Rake::Task['uri_service:ci_impl'].invoke
+      solr_wrapper_instance.with_collection(name: 'test', dir: File.join('spec/fixtures', 'solr_cores/uri_service_solr6/conf')) do |collection_name|
+        Rake::Task['db:drop'].invoke
+        Rake::Task['db:create'].invoke
+        Rake::Task['db:migrate'].invoke
+        Rake::Task['uri_service:rspec'].invoke
       end
-      puts 'Stopping solr...'
+      print 'Stopping solr...'
     end
-    puts 'Solr has been stopped.'
-  end
+    puts 'stopped.'
 
-  task :ci_impl do
-    Rake::Task['db:drop'].invoke
-    Rake::Task['db:create'].invoke
-    Rake::Task['db:migrate'].invoke
-    Rake::Task['db:seed'].invoke
-    Rake::Task['uri_service:rspec'].invoke
+    puts "\nCI run finished in #{(Time.now - start_time)} seconds"
   end
 
   task :clear_solr do
