@@ -68,7 +68,7 @@ describe '/api/v1/vocabularies', type: :request do
       end
 
       it 'returns error in json' do
-        expect(JSON.parse(response.body)).to match('error' => { 'messages' => 'validation errors here' })
+        expect(JSON.parse(response.body)).to match('error' => { 'messages' => 'String key can\'t be blank' })
       end
     end
   end

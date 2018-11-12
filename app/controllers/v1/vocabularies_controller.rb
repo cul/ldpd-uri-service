@@ -21,9 +21,9 @@ module V1
     def create
       vocabulary = Vocabulary.new(create_params)
       if vocabulary.save
-        render json: vocabulary.to_json(only: SHOW_FIELDS), status: 201 # location header with url to new resource
+        render json: vocabulary.to_json(only: SHOW_FIELDS), status: 201
       else
-        render json: { error: { messages: 'validation errors here' } }, status: 400
+        render json: { error: { messages: vocabulary.errors.full_messages.to_sentence } }, status: 400
       end
     end
 
@@ -36,7 +36,7 @@ module V1
       elsif vocabulary.update(update_params)
         render json: vocabulary.to_json(only: SHOW_FIELDS), status: 200
       else
-        render json: { error: { messsage: 'Validations Errors', code: 400 } }, status: 400
+        render json: { error: { messsage: vocabulary.errors.full_messages.to_sentence, code: 400 } }, status: 400
       end
     end
 
@@ -49,7 +49,7 @@ module V1
       elsif vocabulary.destroy
         render json: '', status: :no_content
       else
-        render json: { error: { message: 'deleting was unsuccessful' } }, status: 500
+        render json: { error: { message: 'Deleting was unsuccessful.' } }, status: 500
       end
     end
 
