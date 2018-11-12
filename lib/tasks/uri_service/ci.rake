@@ -1,4 +1,3 @@
-require 'solr_wrapper/rake_task'
 
 namespace :uri_service do
   begin
@@ -19,37 +18,38 @@ namespace :uri_service do
       task.fail_on_error = true
     end
 
-  rescue LoadError => e
-    puts '[Warning] Exception creating rspec rake tasks.  This message can be ignored in environments that intentionally do not pull in the RSpec gem (i.e. production).'
-    puts e
-  end
+    desc 'CI build without rubocop'
+    task ci_nocop: [:environment, 'uri_service:ci_specs']
 
-  desc 'CI build without rubocop'
-  task ci_nocop: [:environment, 'uri_service:ci_specs']
+    desc 'CI build with Rubocop validation'
+    task ci: [:environment, 'uri_service:rubocop', 'uri_service:ci_specs']
 
-  desc 'CI build with Rubocop validation'
-  task ci: [:environment, 'uri_service:rubocop', 'uri_service:ci_specs']
+    require 'solr_wrapper/rake_task'
+    task ci_specs: :environment do
+      start_time = Time.now
 
-  task ci_specs: :environment do
-    start_time = Time.now
+      ENV['RAILS_ENV'] = 'test'
+      Rails.env = ENV['RAILS_ENV']
 
-    ENV['RAILS_ENV'] = 'test'
-    Rails.env = ENV['RAILS_ENV']
-
-    puts "Unpacking and starting solr...\n"
-    SolrWrapper.wrap do |solr_wrapper_instance|
-      # Create collection
-      solr_wrapper_instance.with_collection(name: 'test', dir: File.join('spec/fixtures', 'solr_cores/uri_service_solr6/conf')) do |collection_name|
-        Rake::Task['db:drop'].invoke
-        Rake::Task['db:create'].invoke
-        Rake::Task['db:migrate'].invoke
-        Rake::Task['uri_service:rspec'].invoke
+      puts "Unpacking and starting solr...\n"
+      SolrWrapper.wrap do |solr_wrapper_instance|
+        # Create collection
+        solr_wrapper_instance.with_collection(name: 'test', dir: File.join('spec/fixtures', 'solr_cores/uri_service_solr6/conf')) do |collection_name|
+          Rake::Task['db:drop'].invoke
+          Rake::Task['db:create'].invoke
+          Rake::Task['db:migrate'].invoke
+          Rake::Task['uri_service:rspec'].invoke
+        end
+        print 'Stopping solr...'
       end
-      print 'Stopping solr...'
-    end
-    puts 'stopped.'
+      puts 'stopped.'
 
-    puts "\nCI run finished in #{(Time.now - start_time)} seconds"
+      puts "\nCI run finished in #{(Time.now - start_time)} seconds"
+    end
+
+  rescue LoadError => e
+    puts '[Warning] Exception creating ci/rubocop/rspec rake tasks.  This message can be ignored in environments that intentionally do not pull in the appropriate gems (i.e. production).'
+    puts e
   end
 
   task :clear_solr do
