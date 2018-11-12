@@ -240,7 +240,7 @@ TODO
         "custom_field_1": "something"
       },
       {
-        "pref_label": 'Eric O'Hanlon',
+        "pref_label": "Eric O'Hanlon",
         "uri":"https://id.library.columbia.edu/term/4444-5555-6666...",
         "authority": "local",
         "custom_field_2": "another thing"
