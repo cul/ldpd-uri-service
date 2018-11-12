@@ -234,7 +234,7 @@ TODO
     "total records": 55,
     "terms": [
       {
-        "pref_label": 'Carla Galarza',
+        "pref_label": "Carla Galarza",
         "uri":"https://id.library.columbia.edu/term/1111-2222-3333-...",
         "authority": "local",
         "custom_field_1": "something"
