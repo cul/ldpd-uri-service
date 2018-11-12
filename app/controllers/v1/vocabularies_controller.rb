@@ -21,7 +21,7 @@ module V1
     def create
       vocabulary = Vocabulary.new(create_params)
       if vocabulary.save
-        render json: vocabulary.to_json(only: SHOW_FIELDS), status: 201 #location header with url to new resource
+        render json: vocabulary.to_json(only: SHOW_FIELDS), status: 201 # location header with url to new resource
       else
         render json: { error: { messages: 'validation errors here' } }, status: 400
       end
@@ -57,12 +57,12 @@ module V1
 
     private
 
-    def create_params
-      params.permit(:string_key, :label)
-    end
+      def create_params
+        params.permit(:string_key, :label)
+      end
 
-    def update_params
-      params.permit(:label)
-    end
+      def update_params
+        params.permit(:label)
+      end
   end
 end

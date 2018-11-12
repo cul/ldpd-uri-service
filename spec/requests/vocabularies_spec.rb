@@ -60,7 +60,7 @@ describe '/api/v1/vocabularies', type: :request do
 
     context 'when string_key is missing' do
       before do
-        post '/api/v1/vocabularies', params: { string_key: nil, label: 'Collections'}
+        post '/api/v1/vocabularies', params: { string_key: nil, label: 'Collections' }
       end
 
       it 'returns 400' do
