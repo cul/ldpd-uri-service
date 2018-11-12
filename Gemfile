@@ -7,6 +7,10 @@ ruby '2.5.3'
 gem 'rails', '~> 5.2.1'
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3'
+
+# Use mysql in deployed environments
+gem 'mysql2'
+
 # Use Puma as the app server
 gem 'puma', '~> 3.11'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
@@ -32,6 +36,12 @@ group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   gem 'coveralls', require: false
+  gem 'capistrano', '~> 3.11', require: false
+  gem 'capistrano-cul', require: false
+  gem 'capistrano-passenger', '~> 0.1', require: false
+  gem 'capistrano-rails', '~> 1.4', require: false
+  gem 'capistrano-resque', '~> 0.2.2', require: false
+  gem 'capistrano-rvm', '~> 0.1', require: false
   # rspec for testing
   gem 'rspec-rails', '~> 3.8'
   # rubocop for code analysis/formatting
