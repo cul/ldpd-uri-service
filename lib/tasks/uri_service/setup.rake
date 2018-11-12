@@ -1,0 +1,31 @@
+namespace :uri_service do
+  namespace :setup do
+    # Note: Don't include Rails environment for this task, since enviroment includes a check for the presence of database.yml
+    task :config_files do
+      # database.yml
+      database_yml_file = File.join(Rails.root, 'config/database.yml')
+      FileUtils.touch(database_yml_file) # Create if it doesn't exist
+      database_yml = YAML.load_file(database_yml_file) || {}
+      ['development', 'test'].each do |env_name|
+        database_yml[env_name] = {
+          'adapter' => 'sqlite3',
+          'database' => 'db/' + env_name + '.sqlite3',
+          'pool' => 5,
+          'timeout' => 5000
+        }
+      end
+      File.open(database_yml_file, 'w') { |f| f.write database_yml.to_yaml }
+
+      # solr.yml
+      solr_yml_file = File.join(Rails.root, 'config/solr.yml')
+      FileUtils.touch(solr_yml_file) # Create if it doesn't exist
+      solr_yml = YAML.load_file(solr_yml_file) || {}
+      ['development', 'test'].each do |env_name|
+        solr_yml[env_name] = {
+          'url' => 'http://localhost:9983/solr/' + env_name
+        }
+      end
+      File.open(solr_yml_file, 'w') { |f| f.write solr_yml.to_yaml }
+    end
+  end
+end

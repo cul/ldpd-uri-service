@@ -26,7 +26,11 @@
 # Ignore master key for decrypting credentials and more.
 /config/master.key
 
+# Ignore coverage directory
+/coverage
+
 ### Begin App Ignores ###
 
 # Ignore config files with sensitive data
 database.yml
+solr.yml
