@@ -20,7 +20,9 @@ install_plugin Capistrano::SCM::Git
 #   https://github.com/capistrano/rails
 #   https://github.com/capistrano/passenger
 #
-require 'capistrano/rails'
+require 'capistrano/bundler'
+# require 'capistrano/rails/assets' # Don't need to precompile assets in API app.
+require 'capistrano/rails/migrations'
 require 'capistrano/rvm'
 require 'capistrano/passenger'
 require 'capistrano/cul'
