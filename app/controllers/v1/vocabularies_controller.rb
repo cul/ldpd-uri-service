@@ -13,7 +13,7 @@ module V1
       if (vocabulary = Vocabulary.find_by(string_key: params[:string_key]))
         render json: vocabulary.to_json(only: SHOW_FIELDS), status: 200
       else
-        render json: { error: { message: 'Not Found' } }.to_json, status: 404
+        render json: { errors: [{ title: 'Not Found' }] }.to_json, status: 404
       end
     end
 
@@ -23,7 +23,7 @@ module V1
       if vocabulary.save
         render json: vocabulary.to_json(only: SHOW_FIELDS), status: 201
       else
-        render json: { error: { messages: vocabulary.errors.full_messages.to_sentence } }, status: 400
+        render json: { errors: vocabulary.errors.full_messages.map { |e| { title: e } } }, status: 400 # each error should be its own error
       end
     end
 
@@ -32,11 +32,11 @@ module V1
       vocabulary = Vocabulary.find_by(string_key: params[:string_key])
 
       if vocabulary.nil?
-        render json: { error: { message: 'Not Found' } }, status: 404
+        render json: { errors: [{ title: 'Not Found' }] }, status: 404
       elsif vocabulary.update(update_params)
         render json: vocabulary.to_json(only: SHOW_FIELDS), status: 200
       else
-        render json: { error: { messsage: vocabulary.errors.full_messages.to_sentence, code: 400 } }, status: 400
+        render json: { errors: vocabulary.errors.full_messages.map { |e| { title: e } } }, status: 400
       end
     end
 
@@ -45,11 +45,11 @@ module V1
       vocabulary = Vocabulary.find_by(string_key: params[:string_key])
 
       if vocabulary.nil?
-        render json: { error: { message: 'Not Found' } }, status: 404
+        render json: { errors: [{ title: 'Not Found' }] }, status: 404
       elsif vocabulary.destroy
         render json: '', status: :no_content
       else
-        render json: { error: { message: 'Deleting was unsuccessful.' } }, status: 500
+        render json: { errors: [{ title: 'Deleting was unsuccessful.' }] }, status: 500
       end
     end
 

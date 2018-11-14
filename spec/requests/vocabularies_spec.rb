@@ -29,7 +29,7 @@ describe '/api/v1/vocabularies', type: :request do
 
     it 'returns 404 if vocabulary not found' do
       get '/api/v1/vocabularies/not_created_yet'
-      expect(JSON.parse(response.body)).to match('error' => { 'message' => 'Not Found' })
+      expect(JSON.parse(response.body)).to match('errors' => [{ 'title' => 'Not Found' }])
       expect(response.status).to be 404
     end
   end
@@ -68,7 +68,7 @@ describe '/api/v1/vocabularies', type: :request do
       end
 
       it 'returns error in json' do
-        expect(JSON.parse(response.body)).to match('error' => { 'messages' => 'String key can\'t be blank' })
+        expect(JSON.parse(response.body)).to match('errors' => [{ 'title' => 'String key can\'t be blank' }])
       end
     end
   end
