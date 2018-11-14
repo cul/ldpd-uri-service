@@ -47,7 +47,7 @@ module V1
       if vocabulary.nil?
         render json: { errors: [{ title: 'Not Found' }] }, status: 404
       elsif vocabulary.destroy
-        render json: '', status: :no_content
+        head :no_content
       else
         render json: { errors: [{ title: 'Deleting was unsuccessful.' }] }, status: 500
       end
