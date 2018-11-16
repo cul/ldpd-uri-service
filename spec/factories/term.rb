@@ -1,13 +1,11 @@
 FactoryBot.define do
   factory :term do
-    association :vocabulary,
-      string_key: 'mythical_creatures', label: 'Mythical Creatures',
-      custom_fields: {
-        harry_potter_reference: {
-          label: 'Harry Potter Reference',
-          data_type: 'boolean'
-          }
-        }
+    association :vocabulary, custom_fields: {
+      harry_potter_reference: {
+        label: 'Harry Potter Reference',
+        data_type: 'boolean'
+      }
+    }
 
     factory :external_term do
       pref_label { 'Unicorns' }

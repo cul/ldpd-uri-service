@@ -11,7 +11,7 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
       get '/api/v1/vocabularies'
       expect(JSON.parse(response.body)).to match(
         'vocabularies' => [
-          { 'string_key' => 'subjects', 'label' => 'Subjects', 'custom_fields' => {} },
+          { 'string_key' => 'mythical_creatures', 'label' => 'Mythical Creatures', 'custom_fields' => {} },
           { 'string_key' => 'names', 'label' => 'Names', 'custom_fields' => {} }
         ]
       )
@@ -22,8 +22,8 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
     before { FactoryBot.create(:vocabulary) }
 
     it 'returns one vocabulary' do
-      get '/api/v1/vocabularies/subjects'
-      expect(JSON.parse(response.body)).to match('string_key' => 'subjects', 'label' => 'Subjects', 'custom_fields' => {})
+      get '/api/v1/vocabularies/mythical_creatures'
+      expect(JSON.parse(response.body)).to match('string_key' => 'mythical_creatures', 'label' => 'Mythical Creatures', 'custom_fields' => {})
       expect(response.status).to be 200
     end
 
@@ -78,15 +78,15 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
 
     context 'when updating label' do
       before do
-        patch '/api/v1/vocabularies/subjects', params: { label: 'FAST Subjects' }
+        patch '/api/v1/vocabularies/mythical_creatures', params: { label: 'FAST Mythical Creatures' }
       end
 
       it 'updates label for vocabulary' do
-        expect(Vocabulary.find_by(string_key: 'subjects').label).to eql 'FAST Subjects'
+        expect(Vocabulary.find_by(string_key: 'mythical_creatures').label).to eql 'FAST Mythical Creatures'
       end
 
       it 'returns new vocabulary' do
-        expect(JSON.parse(response.body)).to match('string_key' => 'subjects', 'label' => 'FAST Subjects', 'custom_fields' => {})
+        expect(JSON.parse(response.body)).to match('string_key' => 'mythical_creatures', 'label' => 'FAST Mythical Creatures', 'custom_fields' => {})
       end
 
       it 'returns 200' do
@@ -96,11 +96,11 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
 
     context 'when updating string key' do
       before do
-        patch '/api/v1/vocabularies/subjects', params: { string_key: 'fast_subjects' }
+        patch '/api/v1/vocabularies/mythical_creatures', params: { string_key: 'fast_mythical_creatures' }
       end
 
       it 'does not update record' do
-        expect(JSON.parse(response.body)).to match('string_key' => 'subjects', 'label' => 'Subjects', 'custom_fields' => {})
+        expect(JSON.parse(response.body)).to match('string_key' => 'mythical_creatures', 'label' => 'Mythical Creatures', 'custom_fields' => {})
       end
 
       # not sure if this is the correct reponse code.
@@ -124,7 +124,7 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
     context 'when deleting vocabulary' do
       before do
         FactoryBot.create(:vocabulary)
-        delete '/api/v1/vocabularies/subjects'
+        delete '/api/v1/vocabularies/mythical_creatures'
       end
 
       it 'returns 204' do
@@ -132,7 +132,7 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
       end
 
       it 'removes vocabulary from database' do
-        expect(Vocabulary.find_by(string_key: 'subjects')).to be nil
+        expect(Vocabulary.find_by(string_key: 'mythical_creatures')).to be nil
       end
     end
 

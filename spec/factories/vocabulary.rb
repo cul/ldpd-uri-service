@@ -1,6 +1,7 @@
 FactoryBot.define do
   factory :vocabulary do
-    label      { 'Subjects' }
-    string_key { 'subjects' }
+    label      { 'Mythical Creatures' }
+    string_key { 'mythical_creatures' }
+    custom_fields { }
   end
 end
