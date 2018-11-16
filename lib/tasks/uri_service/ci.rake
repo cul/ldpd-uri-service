@@ -25,6 +25,7 @@ namespace :uri_service do
     task ci: [:environment, 'uri_service:rubocop', 'uri_service:ci_specs']
 
     require 'solr_wrapper/rake_task'
+    desc 'CI build just running specs'
     task ci_specs: :environment do
       start_time = Time.now
 
