@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe '/api/v1/vocabularies', type: :request do
+RSpec.describe '/api/v1/vocabularies', type: :request do
   describe 'GET /api/v1/vocabularies' do
     before do
       FactoryBot.create(:vocabulary)
