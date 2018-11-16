@@ -1,5 +1,7 @@
 # URI Service (Application)
 
+[![Coverage Status](https://coveralls.io/repos/github/cul/ldpd-uri-service/badge.svg?branch=master)](https://coveralls.io/github/cul/ldpd-uri-service?branch=master)
+
 **URI Service** is a standalone Rails 5 application that creates/stores local and temporary terms and caches external URI terms. To start the application's only interface will be a JSON api, though we see expanding the application to include html pages for local terms.
 
 URI Service makes some assumptions about how URIs should be organized. A URI is always related to a vocabulary. A vocabulary has many URI terms. Multiple authorities might be represented within a vocabulary. A URI must be unique to a vocabulary, but a URI can appear in multiple vocabularies.
