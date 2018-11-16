@@ -1,6 +1,11 @@
 # Require simplecov/coveralls before anything else.
 require 'simplecov'
 require 'coveralls'
+
+# Removing output removed the use of a gem that defines 'Term', which in turn
+# does not allow us to test our Term model.
+Coveralls::Output.no_color = true
+
 Coveralls.wear!('rails')
 
 # Use both the coveralls formatter (for sending results to coveralls) and the
