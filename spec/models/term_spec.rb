@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe Term, type: :model do
+  let(:term_solr_doc) { URIService.solr.find_term(term.vocabulary.string_key, term.uri) }
+
   describe 'when creating a external term' do
     let(:term) { FactoryBot.create(:external_term) }
 
@@ -25,6 +27,16 @@ RSpec.describe Term, type: :model do
     it 'returns error if uri is already represented in vocabulary' do
       term
       expect { FactoryBot.create(:external_term) }.to raise_error ActiveRecord::RecordInvalid
+    end
+
+    it 'creates solr document' do
+      expect(term_solr_doc).to include(
+        uri: 'http://id.worldcat.org/fast/1161301/',
+        pref_label: 'Unicorns',
+        term_type: 'external',
+        authority: 'fast',
+        harry_potter_reference: true
+      )
     end
   end
 
@@ -57,6 +69,14 @@ RSpec.describe Term, type: :model do
         expect { term }.to raise_error ActiveRecord::RecordInvalid
       end
     end
+
+    it 'creates solr document' do
+      expect(term_solr_doc).to include(
+        pref_label: 'Dragons',
+        term_type: 'local',
+        harry_potter_reference: true
+      )
+    end
   end
 
   describe 'when creating temporary term' do
@@ -78,6 +98,15 @@ RSpec.describe Term, type: :model do
       term
       expect { FactoryBot.create(:temp_term) }.to raise_error ActiveRecord::RecordInvalid
     end
+
+    it 'creates solr document' do
+      expect(term_solr_doc).to include(
+        pref_label: 'Yeti',
+        term_type: 'temporary',
+        alt_label: ['Big Foot'],
+        harry_potter_reference: false
+      )
+    end
   end
 
   describe 'when creating a term' do
@@ -92,23 +121,36 @@ RSpec.describe Term, type: :model do
         FactoryBot.create(:external_term, term_type: '')
       }.to raise_error ActiveRecord::RecordInvalid
     end
-
-    it 'creates a record in solr'
   end
 
   describe 'when updating record' do
-    let(:example_term) { FactoryBot.create(:external_term) }
+    let(:term) { FactoryBot.create(:external_term) }
 
     it 'cannot change uuid' do
-      expect(example_term.update(uuid: 1234)).to be false
+      expect(term.update(uuid: 1234)).to be false
     end
 
     it 'cannot change term_type' do
-      expect(example_term.update(term_type: 'local')).to be false
+      expect(term.update(term_type: 'local')).to be false
     end
 
     it 'cannot change uri' do
-      expect(example_term.update(uri: 'https://example.com/term/fakes')).to be false
+      expect(term.update(uri: 'https://example.com/term/fakes')).to be false
+    end
+
+    it 'updates solr document' do
+      term.update(alt_label: ['new_label'])
+      expect(term_solr_doc).to include alt_label: ['new_label']
+    end
+  end
+
+  describe 'when destroying a term' do
+    let(:term) { FactoryBot.create(:external_term) }
+
+    it 'deletes solr document' do
+      expect(term_solr_doc).not_to be nil
+      term.destroy
+      expect(URIService.solr.find_term(term.vocabulary.string_key, term.uri)).to be nil
     end
   end
 end

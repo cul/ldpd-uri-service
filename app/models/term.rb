@@ -18,7 +18,7 @@ class Term < ApplicationRecord
 
   before_validation :add_uuid, :add_uri, :add_uri_hash, on: :create
 
-  # after_commit :update_solr # Is triggered after successful save/update/destroy.
+  after_commit :update_solr # Is triggered after successful save/update/destroy.
 
   validates :vocabulary, :pref_label, :uri, :uri_hash, :uuid, :term_type, presence: true
   validates :term_type, inclusion: { in: TERM_TYPES }
@@ -30,17 +30,17 @@ class Term < ApplicationRecord
 
   def to_solr
     {
-      'uuid'          => uuid, # set uuid to be primary field in solr core
+      'uuid'          => uuid,
       'uri'           => uri,
       'pref_label'    => pref_label,
-      'alt_label'     => alt_label, # make sure this is an array
+      'alt_label'     => alt_label,
       'term_type'     => term_type,
       'vocabulary'    => vocabulary.string_key,
       'authority'     => authority,
-      'custom_fields' => custom_fields # make sure this is a hash
+      'custom_fields' => custom_fields.to_json
     }.tap do |doc|
       vocabulary.custom_fields.each do |k, v|
-        doc["#{k}#{SOLR_SUFFIX[v[:data_type]]}"] = term.custom_field[f]
+        doc["#{k}#{SOLR_SUFFIX[v[:data_type]]}"] = self.custom_fields[k]
       end
     end
   end
@@ -91,8 +91,11 @@ class Term < ApplicationRecord
       end
     end
 
-    def update_solr
-      # if record was deleted
-      # if record was persisted
+    def update_solr # If this is unsuccessful the solr core will be out of sync
+      if self.destroyed?
+        URIService.solr.delete(uuid)
+      elsif self.persisted?
+        URIService.solr.add(to_solr)
+      end
     end
 end
