@@ -5,4 +5,8 @@ class Vocabulary < ApplicationRecord
   validates :label,      presence: true
 
   store :custom_fields, coder: JSON
+
+  def to_api
+    as_json(only: [:string_key, :label, :custom_fields])
+  end
 end

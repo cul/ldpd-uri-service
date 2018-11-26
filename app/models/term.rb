@@ -40,9 +40,30 @@ class Term < ApplicationRecord
       'custom_fields' => custom_fields.to_json
     }.tap do |doc|
       vocabulary.custom_fields.each do |k, v|
-        doc["#{k}#{SOLR_SUFFIX[v[:data_type]]}"] = self.custom_fields[k]
+        doc["#{k}#{URIService.solr_suffix(v[:data_type])}"] = self.custom_fields[k]
       end
     end
+  end
+
+  def add_custom_field(field, value)
+    if vocabulary.nil?
+      errors.add(:custom_field, 'cannot add custom field until vocabulary relationship has been set')
+    elsif !vocabulary.custom_fields.keys.include?(field)
+      errors.add(:custom_field, "cannot add #{field} because it is not defined by parent vocabulary")
+    else
+      self.custom_fields[field] = value
+    end
+  end
+
+
+  def to_api
+    h = as_json(only: [:uuid, :uri, :pref_label, :alt_label, :authority, :term_type])
+
+    if vocabulary
+      vocabulary.custom_fields.each { |f, _| h[f] = custom_fields.fetch(f, nil) }
+    end
+
+    h
   end
 
   private

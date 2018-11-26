@@ -17,21 +17,27 @@ module URIService
     # @param String vocabulary vocabulary string key
     # @param String uri
     # @return nil if no matching term found
-    # @return URIService::Solr::Term if matching term found
+    # @return Hash if matching term found
     def find_term(vocabulary, uri)
-      results = connection.get('select', params: { q: "uri:\"#{uri}\"", fq: "vocabulary:\"#{vocabulary}\"" })
+      results = search do |params|
+        params.vocabulary(vocabulary).uri(uri)
+      end
+
       case results['response']['numFound']
       when 0
         nil
       when 1
-        term_document(results['response']['docs'].first)
+        results['response']['docs'].first
       else
         raise 'More than one term document matched uri'
       end
     end
 
-    # Search through terms
-    def search_term(vocabulary, q)
+    # Solr query. Returns solr json.
+    def search
+      search_parameters = SolrParams.new
+      yield(search_parameters)
+      connection.get('select', params: search_parameters.to_h)
     end
 
     # Add document
@@ -62,12 +68,6 @@ module URIService
     def clear_solr_index
       connection.delete_by_query('*:*')
       connection.commit
-    end
-
-    def term_document(doc)
-      doc.slice('uri', 'term_type', 'authority', 'uuid', 'pref_label', 'alt_label')
-         .merge(JSON.parse(doc['custom_fields']))
-         .symbolize_keys
     end
   end
 end
