@@ -162,6 +162,8 @@ TODO
 
   _Required params:_ `field_key`, `label` and `data_type`
 
+  _Supported data_type:_ `string`, `number`, `boolean`
+
 - **Success Response**
 
   _Status:_ 201
@@ -210,13 +212,18 @@ TODO
   GET /vocabularies/:string_key/terms?q=smith&authority=naf&page=1&per_page=20`
   GET /vocabularies/:string_key/terms?uri=https://creativecommons.org/publicdomain/zero/1.0/
   GET /vocabularies/:string_key/terms?label=Smith # returns temp term b/c no uri was given
+  GET /vocabularies/:string_key/terms?custom_field=123
   ```
 
   Allowed query fields:
     - `q`: query term labels using fuzzy matching
-    - `authority`: facet by authority
+    - `authority`: search by exact authority string
     - `uri`: search by exact uri string
-    - `label`: search by exact label string
+    - `pref_label`: search by exact pref_label string
+    - `alt_label`: search by exact alt_label string
+    - `term_type`: search by exact term_type
+    - additionally you will be able to query by any custom field name defined in that vocabulary, for example, if a custom field name is `name_type`, doing the following search would search through the terms in that vocabulary for any terms that contain 'personal' in the name_type field. If a `name_type` field is not defined within that vocabulary you will get no results.
+      `GET /vocabularies/:string_key/terms?name_type=personal`
 
   Other allowed params:
     - `per_page`: number of terms per page, default: 20
@@ -250,6 +257,17 @@ TODO
     ]
   }
   ```
+
+#### Find Single Term
+- ** Request **
+
+  ` GET /vocabularies/:string_key/terms/:uri`
+
+- ** Success Response **
+
+  _Status:_ 200
+
+  _Body:_ json representation of object
 
 #### Create term
 - **Request**
