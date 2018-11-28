@@ -31,11 +31,11 @@ RSpec.describe Term, type: :model do
 
     it 'creates solr document' do
       expect(term_solr_doc).to include(
-        uri: 'http://id.worldcat.org/fast/1161301/',
-        pref_label: 'Unicorns',
-        term_type: 'external',
-        authority: 'fast',
-        harry_potter_reference: true
+        'uri' => 'http://id.worldcat.org/fast/1161301/',
+        'pref_label' => 'Unicorns',
+        'term_type' => 'external',
+        'authority' => 'fast',
+        'custom_fields' => '{"harry_potter_reference":true}',
       )
     end
   end
@@ -72,9 +72,9 @@ RSpec.describe Term, type: :model do
 
     it 'creates solr document' do
       expect(term_solr_doc).to include(
-        pref_label: 'Dragons',
-        term_type: 'local',
-        harry_potter_reference: true
+        'pref_label' => 'Dragons',
+        'term_type' => 'local',
+        'custom_fields' => '{"harry_potter_reference":true}'
       )
     end
   end
@@ -101,10 +101,10 @@ RSpec.describe Term, type: :model do
 
     it 'creates solr document' do
       expect(term_solr_doc).to include(
-        pref_label: 'Yeti',
-        term_type: 'temporary',
-        alt_label: ['Big Foot'],
-        harry_potter_reference: false
+        'pref_label' => 'Yeti',
+        'term_type' => 'temporary',
+        'alt_label' => ['Big Foot'],
+        'custom_fields' => '{"harry_potter_reference":false}'
       )
     end
   end
@@ -140,7 +140,7 @@ RSpec.describe Term, type: :model do
 
     it 'updates solr document' do
       term.update(alt_label: ['new_label'])
-      expect(term_solr_doc).to include alt_label: ['new_label']
+      expect(term_solr_doc).to include('alt_label' => ['new_label'])
     end
   end
 
