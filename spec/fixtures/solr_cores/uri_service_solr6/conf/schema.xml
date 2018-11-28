@@ -71,19 +71,12 @@
   <copyField source="pref_label" dest="pref_label_suggest" />
   <copyField source="pref_label" dest="pref_label_suggest_edge" />
   <copyField source="pref_label" dest="pref_label_suggest_ngram" />
+  <copyField source="alt_label" dest="alt_label_suggest" />
+  <copyField source="alt_label" dest="alt_label_suggest_edge" />
+  <copyField source="alt_label" dest="alt_label_suggest_ngram" />
   <!-- sort copyFields -->
   <copyField source="pref_label" dest="pref_label_ssort" />
-
-
-
-
-
-
-
-
-
-
-
+  <copyField source="alt_label" dest="alt_label_ssort" />
 
   <fieldType name="string" class="solr.StrField" sortMissingLast="true" />
   <fieldType name="boolean" class="solr.BoolField" sortMissingLast="true"/>

@@ -6,7 +6,7 @@ module URIService
 
     def initialize
       @parameters = {
-        q: '*:*',
+        q: nil,
         qt: 'search',
         fq: [],
         rows: DEFAULT_ROWS,
@@ -25,7 +25,7 @@ module URIService
     end
 
     def q(query)
-      @parameters[:q] = q unless query.nil?
+      @parameters[:q] = query unless query.nil?
       self
     end
 

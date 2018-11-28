@@ -817,14 +817,15 @@
        queries across multiple shards
     -->
 
-  <!-- request handler to return typeahead suggestions -->
-  <requestHandler name="/suggest" class="solr.SearchHandler">
+  <!-- request handler to return searches -->
+  <requestHandler name="/search" class="solr.SearchHandler">
     <lst name="defaults">
       <str name="echoParams">explicit</str>
       <str name="defType">edismax</str>
+      <str name="q.alt">*:*</str>
       <str name="rows">10</str>
-      <str name="qf">pref_label_suggest^30 pref_label_suggest_ngram^50.0 uri^60.0</str>
-      <str name="pf">pref_label_suggest_edge^50.0</str>
+      <str name="qf">pref_label_suggest^40 pref_label_suggest_ngram^30 alt_label_suggest^20 alt_label_suggest_ngram^10</str>
+      <str name="pf">pref_label_suggest_edge^40.0 alt_label_suggest_edge^30.0</str>
       <str name="sort">score desc,pref_label_ssort asc</str>
       <str name="fl">
         *,
@@ -833,14 +834,16 @@
     </lst>
   </requestHandler>
 
-  <requestHandler name="/select" class="solr.SearchHandler">
+  <requestHandler name="/select" class="solr.SearchHandler" default="true">
     <!-- default values for query parameters can be specified, these
          will be overridden by parameters in the request
       -->
      <lst name="defaults">
        <str name="echoParams">explicit</str>
+       <str name="defType">edismax</str>
+       <str name="q.alt">*:*</str>
        <int name="rows">10</int>
-       <str name="df">text</str>
+       <str name="qf">pref_label alt_label</str>
      </lst>
     <!-- In addition to defaults, "appends" params can be specified
          to identify values which should be appended to the list of
