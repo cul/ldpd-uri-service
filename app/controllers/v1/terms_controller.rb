@@ -50,7 +50,7 @@ module V1
       end
 
       if term.save
-        render json: term.to_api, status: 201
+        render json: URIService::JSON.term(term), status: 201
       else
         render json: URIService::JSON.errors(term.errors.full_messages), status: 400
       end
@@ -58,7 +58,7 @@ module V1
 
     # PATCH /vocabularies/:string_key/terms/:uri
     def update
-      term = Term.find_by(vocabulary: vocabulary, uri: params[:uri])
+      term = Term.find_by(vocabulary: vocabulary, uri: params[:uri]) # should include querying for vocab
 
       if term.nil?
         render json: URIService::JSON.errors('Not Found'), status: 404
@@ -70,7 +70,7 @@ module V1
         end
 
         if term.save
-          render json: term.to_api, status: 200
+          render json: URIService::JSON.term(term), status: 200
         else
           render json: URIService::JSON.errors(term.errors.full_messages), status: 400
         end

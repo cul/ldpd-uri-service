@@ -1,25 +1,39 @@
 module URIService
   module JSON
-    def self.term(solr_doc)
-      document = solr_doc.symbolize_keys
+    # Converts hash or Term record into output hash used by the api
+    #
+    # @param [Hash|Term] obj to convert to hash for output
+    # @return [Hash]
+    def self.term(obj)
+      if obj.is_a? Term
+        h = obj.as_json(only: [:uuid, :uri, :pref_label, :alt_label, :authority, :term_type])
 
-      output = {
-        uuid:       document.fetch(:uuid, nil),
-        uri:        document.fetch(:uri, nil),
-        pref_label: document.fetch(:pref_label, nil),
-        alt_label:  document.fetch(:alt_label, []),
-        authority:  document.fetch(:authority, nil),
-        term_type:  document.fetch(:term_type, nil)
-      }
-
-      if vocabulary = Vocabulary.find_by(string_key: document[:vocabulary])
-        extra_fields = ::JSON.parse(document[:custom_fields])
-        vocabulary.custom_fields.keys.each do |f|
-          output[f] = extra_fields.fetch(f, nil)
+        if obj.vocabulary
+          obj.vocabulary.custom_fields.each { |f, _| h[f] = custom_fields.fetch(f, nil) }
         end
-      end
 
-      output
+        h
+      elsif obj.is_a? Hash
+        document = obj.symbolize_keys
+
+        output = {
+          uuid:       document.fetch(:uuid, nil),
+          uri:        document.fetch(:uri, nil),
+          pref_label: document.fetch(:pref_label, nil),
+          alt_label:  document.fetch(:alt_label, []),
+          authority:  document.fetch(:authority, nil),
+          term_type:  document.fetch(:term_type, nil)
+        }
+
+        if vocabulary = Vocabulary.find_by(string_key: document[:vocabulary])
+          extra_fields = ::JSON.parse(document[:custom_fields])
+          vocabulary.custom_fields.keys.each do |f|
+            output[f] = extra_fields.fetch(f, nil)
+          end
+        end
+
+        output
+      end
     end
 
     def self.term_search(solr_response)

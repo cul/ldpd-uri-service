@@ -36,8 +36,16 @@ module URIService
     # Solr query. Returns solr json.
     def search
       search_parameters = SolrParams.new
+
       yield(search_parameters)
-      connection.get('select', params: search_parameters.to_h)
+
+      params = search_parameters.to_h
+
+      # If making a search use the /search handler otherwise use /select. /select
+      # queries with just filters are faster than /search queries.
+      handler = (params[:q].blank?) ? 'select' : 'search'
+
+      connection.get(handler, params: params)
     end
 
     # Add document

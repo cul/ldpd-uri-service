@@ -55,17 +55,6 @@ class Term < ApplicationRecord
     end
   end
 
-
-  def to_api
-    h = as_json(only: [:uuid, :uri, :pref_label, :alt_label, :authority, :term_type])
-
-    if vocabulary
-      vocabulary.custom_fields.each { |f, _| h[f] = custom_fields.fetch(f, nil) }
-    end
-
-    h
-  end
-
   private
 
     def add_uuid
