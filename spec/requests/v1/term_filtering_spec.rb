@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'Searching terms', type: :request do
+RSpec.describe 'Filtering terms', type: :request do
   shared_examples 'json contains external term' do
     it 'contains external term' do
       expect(response.body).to include_json(
