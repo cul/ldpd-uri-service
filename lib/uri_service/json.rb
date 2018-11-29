@@ -9,7 +9,7 @@ module URIService
         h = obj.as_json(only: [:uuid, :uri, :pref_label, :alt_label, :authority, :term_type])
 
         if obj.vocabulary
-          obj.vocabulary.custom_fields.each { |f, _| h[f] = custom_fields.fetch(f, nil) }
+          obj.vocabulary.custom_fields.each { |f, _| h[f] = obj.custom_fields.fetch(f, nil) }
         end
 
         h
