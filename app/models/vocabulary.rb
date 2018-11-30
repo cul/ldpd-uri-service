@@ -1,7 +1,10 @@
 class Vocabulary < ApplicationRecord
   has_many :term, dependent: :destroy
 
-  validates :string_key, presence: true, uniqueness: true
+  validates :string_key, presence: true, uniqueness: true, format: {
+    with: /\A[a-z]+[a-z0-9_]*\z/,
+    message: 'only allows lowercase alphanumeric characters and underscores'
+  }
   validates :label,      presence: true
 
   store :custom_fields, coder: JSON

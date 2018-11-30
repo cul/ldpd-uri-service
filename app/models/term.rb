@@ -8,12 +8,6 @@ class Term < ApplicationRecord
 
   VALID_URI_REGEX = /\A#{URI.regexp}\z/
 
-  SOLR_SUFFIX = {
-    'string'  => '_si',
-    'number'  => '_ii',
-    'boolean' => '_bi'
-  }.freeze
-
   belongs_to :vocabulary
 
   before_validation :add_uuid, :add_uri, :add_uri_hash, on: :create

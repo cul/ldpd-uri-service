@@ -68,7 +68,14 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
       end
 
       it 'returns error in json' do
-        expect(JSON.parse(response.body)).to match('errors' => [{ 'title' => 'String key can\'t be blank' }])
+        expect(response.body).to be_json_eql(%(
+          {
+            "errors": [
+              { "title": "String key can't be blank" },
+              { "title": "String key only allows lowercase alphanumeric characters and underscores" }
+            ]
+          }
+        ))
       end
     end
   end
