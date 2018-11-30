@@ -72,7 +72,7 @@ class Term < ApplicationRecord
       when TEMPORARY
         self.uri = URI(TEMPORARY_URI_BASE + Digest::SHA256.hexdigest(self.vocabulary.string_key + self.pref_label)).to_s
       when EXTERNAL
-        unless self.uri.match? VALID_URI_REGEX
+        if self.uri.nil? || !self.uri.match?(VALID_URI_REGEX)
           errors.add(:uri, 'is not valid')
         end
       end

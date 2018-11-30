@@ -48,7 +48,7 @@ RSpec.describe 'Querying terms', type: :request do
     invalid_queries = ['z', 'W', 'Wh']
 
     invalid_queries.each do |q|
-      it "returns expected results for query '#{q}' " do
+      it "returns no results for query '#{q}' " do
         get "/api/v1/vocabularies/mythical_creatures/terms?q=#{q}"
         expect(response.body).to be_json_eql('[]').at_path('terms')
       end
