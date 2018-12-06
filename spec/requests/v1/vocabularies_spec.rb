@@ -8,7 +8,7 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
     end
 
     it 'returns all vocabularies' do
-      get '/api/v1/vocabularies'
+      get_with_auth '/api/v1/vocabularies'
       expect(JSON.parse(response.body)).to match(
         'vocabularies' => [
           { 'string_key' => 'mythical_creatures', 'label' => 'Mythical Creatures', 'custom_fields' => {} },
@@ -19,16 +19,22 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
   end
 
   describe 'GET /api/v1/vocabularies/:string_key' do
+    it 'requires authentication' do
+      get '/api/v1/vocabularies/subjects'
+      expect(JSON.parse(response.body)).to match('errors' => [ { 'title' => 'Unauthorized' } ])
+      expect(response.status).to be 401
+    end
+
     before { FactoryBot.create(:vocabulary) }
 
     it 'returns one vocabulary' do
-      get '/api/v1/vocabularies/mythical_creatures'
+      get_with_auth '/api/v1/vocabularies/mythical_creatures'
       expect(JSON.parse(response.body)).to match('string_key' => 'mythical_creatures', 'label' => 'Mythical Creatures', 'custom_fields' => {})
       expect(response.status).to be 200
     end
 
     it 'returns 404 if vocabulary not found' do
-      get '/api/v1/vocabularies/not_created_yet'
+      get_with_auth '/api/v1/vocabularies/not_created_yet'
       expect(JSON.parse(response.body)).to match('errors' => [{ 'title' => 'Not Found' }])
       expect(response.status).to be 404
     end
@@ -37,7 +43,7 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
   describe 'POST /api/v1/vocabularies' do
     context 'when successfully creating a new vocabulary' do
       before do
-        post '/api/v1/vocabularies', params: { string_key: 'collections', label: 'Collections' }
+        post_with_auth '/api/v1/vocabularies', params: { string_key: 'collections', label: 'Collections' }
       end
 
       it 'creates a new vocabulary record' do
@@ -60,7 +66,7 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
 
     context 'when string_key is missing' do
       before do
-        post '/api/v1/vocabularies', params: { string_key: nil, label: 'Collections' }
+        post_with_auth '/api/v1/vocabularies', params: { string_key: nil, label: 'Collections' }
       end
 
       it 'returns 400' do
@@ -85,7 +91,7 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
 
     context 'when updating label' do
       before do
-        patch '/api/v1/vocabularies/mythical_creatures', params: { label: 'FAST Mythical Creatures' }
+        patch_with_auth '/api/v1/vocabularies/mythical_creatures', params: { label: 'FAST Mythical Creatures' }
       end
 
       it 'updates label for vocabulary' do
@@ -103,7 +109,7 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
 
     context 'when updating string key' do
       before do
-        patch '/api/v1/vocabularies/mythical_creatures', params: { string_key: 'fast_mythical_creatures' }
+        patch_with_auth '/api/v1/vocabularies/mythical_creatures', params: { string_key: 'fast_mythical_creatures' }
       end
 
       it 'does not update record' do
@@ -118,7 +124,7 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
 
     context 'when invalid string key' do
       before do
-        patch '/api/v1/vocabularies/names', params: { label: 'FAST Names' }
+        patch_with_auth '/api/v1/vocabularies/names', params: { label: 'FAST Names' }
       end
 
       it 'returns 404' do
@@ -132,7 +138,7 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
       let(:vocabulary) { FactoryBot.create(:vocabulary) }
 
       before do
-        delete "/api/v1/vocabularies/#{vocabulary.string_key}"
+        delete_with_auth "/api/v1/vocabularies/#{vocabulary.string_key}"
       end
 
       it 'returns 204' do
@@ -146,7 +152,7 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
 
     context 'when invalid string key' do
       before do
-        delete '/api/v1/vocabularies/names'
+        delete_with_auth '/api/v1/vocabularies/names'
       end
 
       it 'returns 404' do

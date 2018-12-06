@@ -20,7 +20,7 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms', type: :request do
 
     context 'when :uri valid' do
       before do
-        get '/api/v1/vocabularies/mythical_creatures/terms/http%3A%2F%2Fid.worldcat.org%2Ffast%2F1161301%2F'
+        get_with_auth '/api/v1/vocabularies/mythical_creatures/terms/http%3A%2F%2Fid.worldcat.org%2Ffast%2F1161301%2F'
       end
 
       it 'returns 200' do
@@ -44,7 +44,7 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms', type: :request do
 
     context 'when :uri invalid' do
       before do
-        get '/api/v1/vocabularies/mythical_creatures/terms/http%3A%2F%2Fid.worldcat.org%2Ffast%2Fnot_valid%2F'
+        get_with_auth '/api/v1/vocabularies/mythical_creatures/terms/http%3A%2F%2Fid.worldcat.org%2Ffast%2Fnot_valid%2F'
       end
 
       it 'returns error in json' do
@@ -74,7 +74,7 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms', type: :request do
   describe 'POST /api/v1/vocabularies/:string_key/terms' do
     context 'when successfully creating a new external term' do
       before do
-        post '/api/v1/vocabularies/mythical_creatures/terms', params: {
+        post_with_auth '/api/v1/vocabularies/mythical_creatures/terms', params: {
           pref_label: 'Minotaur (Greek mythological character)',
           uri: 'http://id.worldcat.org/fast/1023481',
           authority: 'fast',
@@ -109,7 +109,7 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms', type: :request do
 
     context 'when successfully creating a new local term' do
       before do
-        post '/api/v1/vocabularies/mythical_creatures/terms', params: {
+        post_with_auth '/api/v1/vocabularies/mythical_creatures/terms', params: {
           pref_label: 'Hippogriff',
           alt_label: ['Hippogryph'],
           term_type: 'local',
@@ -143,7 +143,7 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms', type: :request do
 
     context 'when successfully creating a new temporary term' do
       before do
-        post '/api/v1/vocabularies/mythical_creatures/terms', params: {
+        post_with_auth '/api/v1/vocabularies/mythical_creatures/terms', params: {
           pref_label: 'Hippogriff',
           term_type: 'temporary',
         }
@@ -175,7 +175,7 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms', type: :request do
 
     context 'when uri is missing for external term' do
       before do
-        post '/api/v1/vocabularies/mythical_creatures/terms', params: {
+        post_with_auth '/api/v1/vocabularies/mythical_creatures/terms', params: {
           pref_label: 'Minotaur (Greek mythological character)',
           authority: 'fast',
           term_type: 'external',
@@ -208,7 +208,7 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms', type: :request do
       end
 
       before do
-        patch "/api/v1/vocabularies/mythical_creatures/terms/#{CGI.escape(term.uri)}", params: {
+        patch_with_auth "/api/v1/vocabularies/mythical_creatures/terms/#{CGI.escape(term.uri)}", params: {
           alt_label: ['Uni']
         }
       end
@@ -246,7 +246,7 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms', type: :request do
       let(:term) { FactoryBot.create(:external_term, vocabulary: vocabulary) }
 
       before do
-        patch "/api/v1/vocabularies/mythical_creatures/terms/#{CGI.escape(term.uri)}", params: {
+        patch_with_auth "/api/v1/vocabularies/mythical_creatures/terms/#{CGI.escape(term.uri)}", params: {
           term_type: 'local'
         }
       end
@@ -263,7 +263,7 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms', type: :request do
 
     context 'when attempting to update a uri that is not associated with a known term' do
       before do
-        patch "/api/v1/vocabularies/mythical_creatures/terms/#{CGI.escape('https://example.com/not/known')}", params: {
+        patch_with_auth "/api/v1/vocabularies/mythical_creatures/terms/#{CGI.escape('https://example.com/not/known')}", params: {
           pref_label: 'New Label'
         }
       end
@@ -280,7 +280,7 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms', type: :request do
       let(:term) { FactoryBot.create(:external_term, uri: uri, vocabulary: vocabulary) }
 
       before do
-        delete "/api/v1/vocabularies/mythical_creatures/terms/#{CGI.escape(term.uri)}"
+        delete_with_auth "/api/v1/vocabularies/mythical_creatures/terms/#{CGI.escape(term.uri)}"
       end
 
       it 'returns 204' do
@@ -294,7 +294,7 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms', type: :request do
 
     context 'when attempting to delete a uri that is not associated with a known term' do
       before do
-        delete '/api/v1/vocabularies/mythical_creatures/terms/http%3A%2F%2Fid.worldcat.org%2Ffast%2Fnot_known%2F'
+        delete_with_auth '/api/v1/vocabularies/mythical_creatures/terms/http%3A%2F%2Fid.worldcat.org%2Ffast%2Fnot_known%2F'
       end
 
       it 'returns 404' do

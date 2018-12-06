@@ -13,7 +13,7 @@ RSpec.describe 'Querying terms', type: :request do
 
     expected_results = [URIService::JSON.term(term)].to_json
 
-    get '/api/v1/vocabularies/mythical_creatures/terms?q=me'
+    get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?q=me'
     expect(response.body).to be_json_eql(expected_results).at_path('terms')
   end
 
@@ -23,7 +23,7 @@ RSpec.describe 'Querying terms', type: :request do
 
     expected_search_results = [URIService::JSON.term(term)].to_json
 
-    get '/api/v1/vocabularies/mythical_creatures/terms?q=i'
+    get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?q=i'
     expect(response.body).to be_json_eql(expected_search_results).at_path('terms')
   end
 
@@ -44,7 +44,7 @@ RSpec.describe 'Querying terms', type: :request do
 
     valid_queries.each do |q|
       it "returns expected results for query '#{q}' " do
-        get "/api/v1/vocabularies/mythical_creatures/terms?q=#{q}"
+        get_with_auth "/api/v1/vocabularies/mythical_creatures/terms?q=#{q}"
         expect(response.body).to be_json_eql(expected_results).at_path('terms')
       end
     end
@@ -53,7 +53,7 @@ RSpec.describe 'Querying terms', type: :request do
 
     invalid_queries.each do |q|
       it "returns no results for query '#{q}' " do
-        get "/api/v1/vocabularies/mythical_creatures/terms?q=#{q}"
+        get_with_auth "/api/v1/vocabularies/mythical_creatures/terms?q=#{q}"
         expect(response.body).to be_json_eql('[]').at_path('terms')
       end
     end
@@ -62,7 +62,7 @@ RSpec.describe 'Querying terms', type: :request do
   it 'does not query by URI' do
     term = FactoryBot.create(:external_term, vocabulary: vocabulary)
 
-    get '/api/v1/vocabularies/mythical_creatures/terms?q=http%3A%2F%2Fid.worldcat.org%2Ffast%2F1161301%2F'
+    get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?q=http%3A%2F%2Fid.worldcat.org%2Ffast%2F1161301%2F'
     expect(response.body).to be_json_eql('[]').at_path('terms')
   end
 
@@ -75,7 +75,7 @@ RSpec.describe 'Querying terms', type: :request do
       URIService::JSON.term(term1), URIService::JSON.term(term2), URIService::JSON.term(term3)
     ].to_json
 
-    get '/api/v1/vocabularies/mythical_creatures/terms?q=Cat'
+    get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?q=Cat'
     expect(response.body).to be_json_eql(expected_results).at_path('terms')
   end
 
@@ -88,7 +88,7 @@ RSpec.describe 'Querying terms', type: :request do
       URIService::JSON.term(term3), URIService::JSON.term(term1), URIService::JSON.term(term2)
     ].to_json
 
-    get '/api/v1/vocabularies/mythical_creatures/terms?q=Cat'
+    get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?q=Cat'
     expect(response.body).to be_json_eql(expected_results).at_path('terms')
   end
 
@@ -101,7 +101,7 @@ RSpec.describe 'Querying terms', type: :request do
       URIService::JSON.term(term1), URIService::JSON.term(term2), URIService::JSON.term(term3)
     ].to_json
 
-    get '/api/v1/vocabularies/mythical_creatures/terms?q=Steve'
+    get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?q=Steve'
     expect(response.body).to be_json_eql(expected_results).at_path('terms')
   end
 
@@ -113,7 +113,7 @@ RSpec.describe 'Querying terms', type: :request do
       URIService::JSON.term(term2), URIService::JSON.term(term1)
     ].to_json
 
-    get '/api/v1/vocabularies/mythical_creatures/terms?q=man'
+    get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?q=man'
     expect(response.body).to be_json_eql(expected_results).at_path('terms')
   end
 
@@ -123,7 +123,7 @@ RSpec.describe 'Querying terms', type: :request do
 
     expected_results = [URIService::JSON.term(term1)].to_json
 
-    get '/api/v1/vocabularies/mythical_creatures/terms?q=bat'
+    get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?q=bat'
     expect(response.body).to be_json_eql(expected_results).at_path('terms')
   end
 
@@ -133,7 +133,7 @@ RSpec.describe 'Querying terms', type: :request do
 
     expected_results = [URIService::JSON.term(term) ].to_json
 
-    get '/api/v1/vocabularies/mythical_creatures/terms?q=bAtMaNnErS'
+    get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?q=bAtMaNnErS'
     expect(response.body).to be_json_eql(expected_results).at_path('terms')
   end
 end
