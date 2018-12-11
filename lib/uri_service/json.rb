@@ -25,6 +25,7 @@ module URIService
           term_type:  document.fetch(:term_type, nil)
         }
 
+        # TODO: Eventually create a Vocabulary lookup cache so we don't do a db query every time we format a Term/Hash as JSON
         if vocabulary = Vocabulary.find_by(string_key: document[:vocabulary])
           extra_fields = ::JSON.parse(document[:custom_fields])
           vocabulary.custom_fields.keys.each do |f|
