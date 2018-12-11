@@ -7,6 +7,8 @@ Rails.application.routes.draw do
         collection do
           match '', via: :options, action: 'options'
         end
+
+        resources :custom_fields, param: :field_key, only: [:create, :update, :destroy]
       end
     end
   end

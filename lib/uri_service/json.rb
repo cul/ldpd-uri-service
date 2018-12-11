@@ -49,6 +49,10 @@ module URIService
       }
     end
 
+    def self.custom_field(vocabulary, field_key)
+      vocabulary.custom_fields[field_key].merge(field_key: field_key)
+    end
+
     # Generates JSON with errors
     #
     # @param String|Array strings describing error
