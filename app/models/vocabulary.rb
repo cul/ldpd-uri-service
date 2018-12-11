@@ -1,5 +1,5 @@
 class Vocabulary < ApplicationRecord
-  has_many :term, dependent: :destroy
+  has_many :terms, dependent: :destroy
 
   validates :string_key, presence: true, uniqueness: true, format: {
     with: /\A[a-z]+[a-z0-9_]*\z/,
