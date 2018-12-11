@@ -1,8 +1,8 @@
 module V1
   class TermsController < ApplicationController
-    # Check that vocabulary is valid, if not should render and error
+    # TODO: Check that vocabulary is valid, if not should render and error
 
-    ## force json type
+    # TODO: force json type
 
     # GET /vocabularies/:string_key/terms
     def index
@@ -58,7 +58,7 @@ module V1
 
     # PATCH /vocabularies/:string_key/terms/:uri
     def update
-      term = Term.find_by(vocabulary: vocabulary, uri: params[:uri]) # should include querying for vocab
+      term = Term.find_by(vocabulary: vocabulary, uri: params[:uri])
 
       if term.nil?
         render json: URIService::JSON.errors('Not Found'), status: 404

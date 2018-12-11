@@ -7,7 +7,6 @@ module URIService
     'boolean' => '_bi'
   }.freeze
 
-  # TODO: Write test to make sure only one object is created.
   def self.solr
     self.solr_connection = URIService::Solr.new unless solr_connection
     solr_connection
