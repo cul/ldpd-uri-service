@@ -15,7 +15,7 @@ module URIService
     end
 
     def fq(field, value)
-      @parameters[:fq] << "#{field}:\"#{value}\"" unless value.nil? ## should probably escape
+      @parameters[:fq] << "#{field}:\"#{escape(value)}\"" unless value.nil? ## should probably escape
       self
     end
 
@@ -25,7 +25,7 @@ module URIService
     end
 
     def q(query)
-      @parameters[:q] = query unless query.nil?
+      @parameters[:q] = escape(query) unless query.nil?
       self
     end
 
@@ -38,5 +38,12 @@ module URIService
     def to_h
       parameters
     end
+
+    private
+
+      # Solr escape values when quering.
+      def escape(v)
+        URIService.solr.solr_escape(v)
+      end
   end
 end
