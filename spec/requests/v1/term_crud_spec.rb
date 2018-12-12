@@ -183,7 +183,11 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms' do
 
   describe 'PATCH /api/v1/vocabularies/:string_key/terms/:uri' do
     context 'when updating alt_label' do
-      let(:term) { FactoryBot.create(:external_term, vocabulary: vocabulary) }
+      let(:term) do
+        FactoryBot.create(:external_term,
+                          vocabulary: vocabulary,
+                          custom_fields: { 'classification' => 'Horses' })
+      end
 
       before do
         patch "/api/v1/vocabularies/mythical_creatures/terms/#{CGI.escape(term.uri)}", params: {
@@ -196,6 +200,11 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms' do
         expect(term.alt_label).to contain_exactly 'Uni'
       end
 
+      it 'preserves custom fields' do
+        term.reload
+        expect(term.custom_fields).to match('classification' => 'Horses')
+      end
+
       it 'returns updated term' do
         expect(response.body).to be_json_eql(%(
           {
@@ -204,7 +213,7 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms' do
             "alt_label": ["Uni"],
             "authority": "fast",
             "term_type": "external",
-            "classification": null
+            "classification": "Horses"
           }
         )).excluding('uuid')
       end

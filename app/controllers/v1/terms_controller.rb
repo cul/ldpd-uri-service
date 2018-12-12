@@ -46,7 +46,8 @@ module V1
       term.vocabulary = vocabulary
 
       custom_fields.each do |f, v|
-        term.set_custom_field(f, params.fetch(f, nil))
+        next unless params.key?(f)
+        term.set_custom_field(f, params[f])
       end
 
       if term.save
@@ -66,7 +67,8 @@ module V1
         term.assign_attributes(update_params) # updates, but doesn't save.
 
         custom_fields.each do |f, v|
-          term.set_custom_field(f, params.fetch(f, nil))
+          next unless params.key?(f)
+          term.set_custom_field(f, params[f])
         end
 
         if term.save
