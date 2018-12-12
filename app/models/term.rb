@@ -10,7 +10,7 @@ class Term < ApplicationRecord
 
   belongs_to :vocabulary
 
-  before_validation :add_uuid, :add_uri, :add_uri_hash, on: :create
+  before_validation :add_uuid, :add_uri, :set_uri_hash, on: :create
 
   after_commit :update_solr # Is triggered after successful save/update/destroy.
 
@@ -39,7 +39,7 @@ class Term < ApplicationRecord
     end
   end
 
-  def add_custom_field(field, value)
+  def set_custom_field(field, value)
     if vocabulary.nil?
       errors.add(:custom_field, 'cannot add custom field until vocabulary relationship has been set')
     elsif !vocabulary.custom_fields.keys.include?(field)
@@ -72,7 +72,7 @@ class Term < ApplicationRecord
       end
     end
 
-    def add_uri_hash
+    def set_uri_hash
       return unless uri
       self.uri_hash = Digest::SHA256.hexdigest(self.uri)
     end
