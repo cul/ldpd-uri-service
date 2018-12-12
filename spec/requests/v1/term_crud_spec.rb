@@ -233,9 +233,9 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms' do
       end
     end
 
-    context 'when invalid uri' do
+    context 'when attempting to update a uri that is not associated with a known term' do
       before do
-        patch "/api/v1/vocabularies/mythical_creatures/terms/#{CGI.escape('https://example.com/not/valid')}", params: {
+        patch "/api/v1/vocabularies/mythical_creatures/terms/#{CGI.escape('https://example.com/not/known')}", params: {
           pref_label: 'New Label'
         }
       end
@@ -264,9 +264,9 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms' do
       end
     end
 
-    context 'when invalid uri' do
+    context 'when attempting to delete a uri that is not associated with a known term' do
       before do
-        delete '/api/v1/vocabularies/mythical_creatures/terms/http%3A%2F%2Fid.worldcat.org%2Ffast%2Fnot_valid%2F'
+        delete '/api/v1/vocabularies/mythical_creatures/terms/http%3A%2F%2Fid.worldcat.org%2Ffast%2Fnot_known%2F'
       end
 
       it 'returns 404' do
