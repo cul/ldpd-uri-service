@@ -6,17 +6,19 @@ class Term < ApplicationRecord
 
   TERM_TYPES = [LOCAL, EXTERNAL, TEMPORARY].freeze
 
-  VALID_URI_REGEX = /\A#{URI.regexp}\z/
-
   belongs_to :vocabulary
 
-  before_validation :add_uuid, :add_uri, :set_uri_hash, on: :create
+  before_validation :set_uuid, :set_uri, :set_uri_hash, on: :create
 
   after_commit :update_solr # Is triggered after successful save/update/destroy.
 
   validates :vocabulary, :pref_label, :uri, :uri_hash, :uuid, :term_type, presence: true
   validates :term_type, inclusion: { in: TERM_TYPES }
-  validate  :uuid_uri_and_term_type_unchanged
+  validates :uri,  format: { with: /\A#{URI.regexp}\z/ },
+                   if: Proc.new { |t| t.uri? && (t.term_type == LOCAL || t.term_type == EXTERNAL) }
+  validates :uuid, format: { with: /\A\h{8}-\h{4}-4\h{3}-[89ab]\h{3}-\h{12}\z/ },
+                   if: Proc.new { |t| t.uuid }
+  validate  :uuid_uri_and_term_type_unchanged, :validate_custom_fields
 
   store :custom_fields, coder: JSON
 
@@ -40,41 +42,39 @@ class Term < ApplicationRecord
   end
 
   def set_custom_field(field, value)
-    if vocabulary.nil?
-      errors.add(:custom_field, 'cannot add custom field until vocabulary relationship has been set')
-    elsif !vocabulary.custom_fields.keys.include?(field)
-      errors.add(:custom_field, "cannot add #{field} because it is not defined by parent vocabulary")
-    else
-      self.custom_fields[field] = value
-    end
+    self.custom_fields[field] = value
   end
 
   private
 
-    def add_uuid
-      self.uuid = SecureRandom.uuid unless uuid
-    end
-
-    def add_uri
-      case term_type
-      when nil, ''
-        errors.add(:uri, 'Missing term_type prevented uri validation')
-      when LOCAL
-        if (host = local_uri_host)
-          self.uri = "#{host}term/#{self.uuid}"
-        end
-      when TEMPORARY
-        self.uri = URI(TEMPORARY_URI_BASE + Digest::SHA256.hexdigest(self.vocabulary.string_key + self.pref_label)).to_s
-      when EXTERNAL
-        if self.uri.nil? || !self.uri.match?(VALID_URI_REGEX)
-          errors.add(:uri, 'is not valid')
+    def validate_custom_fields
+      custom_fields.each do |k, _|
+        # TODO: Validate data_type.
+        unless vocabulary.custom_fields.keys.include?(k)
+          errors.add(:custom_field, "#{k} is not a valid custom field.")
         end
       end
     end
 
+    def set_uuid
+      if new_record?
+        self.uuid = SecureRandom.uuid unless uuid
+      else
+        raise StandardError, 'Cannot set uuid if record has already been persisted.'
+      end
+    end
+
+    def set_uri
+      case term_type
+      when LOCAL
+        self.uri = "#{local_uri_host}term/#{self.uuid}"
+      when TEMPORARY
+        self.uri = URI(TEMPORARY_URI_BASE + Digest::SHA256.hexdigest(self.vocabulary.string_key + self.pref_label)).to_s
+      end
+    end
+
     def set_uri_hash
-      return unless uri
-      self.uri_hash = Digest::SHA256.hexdigest(self.uri)
+      self.uri_hash = Digest::SHA256.hexdigest(self.uri) if uri
     end
 
     # Check that uuid, uri and term_type were not changed.
@@ -91,7 +91,7 @@ class Term < ApplicationRecord
         host = Rails.application.config.local_uri_host.to_s
         host.ends_with?('/') ? host : "#{host}/"
       else
-        errors.add(:base, 'Missing Rails.application.config.local_uri_host')
+        raise StandardError, 'Missing Rails.application.config.local_uri_host'
       end
     end
 

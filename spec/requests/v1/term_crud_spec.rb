@@ -3,7 +3,8 @@ require 'rails_helper'
 RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms' do
   let(:vocabulary) do
     FactoryBot.create(:vocabulary, custom_fields: {
-      classification: { label: 'Classification', data_type: 'string' }
+      classification: { label: 'Classification', data_type: 'string' },
+      harry_potter_reference: { label: 'Harry Potter Reference', data_type: 'boolean' }
     })
   end
 
@@ -34,7 +35,8 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms' do
             "alt_label": [],
             "authority": "fast",
             "term_type": "external",
-            "classification": "Horse"
+            "classification": "Horse",
+            "harry_potter_reference": null
           }
         )).excluding('uuid')
       end
@@ -80,7 +82,8 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms' do
            "uri": "http://id.worldcat.org/fast/1023481",
            "authority": "fast",
            "term_type": "external",
-           "classification": "Human"
+           "classification": "Human",
+           "harry_potter_reference": null
          }
         )).excluding('uuid')
       end
@@ -113,7 +116,8 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms' do
             "alt_label": ["Hippogryph"],
             "term_type": "local",
             "authority": null,
-            "classification": "Eagle"
+            "classification": "Eagle",
+            "harry_potter_reference": null
           }
         )).excluding('uri', 'uuid')
       end
@@ -144,6 +148,7 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms' do
             "alt_label": [],
             "authority": null,
             "term_type": "temporary",
+            "harry_potter_reference": null,
             "classification": null
           }
         )).excluding('uri', 'uuid')
@@ -171,7 +176,6 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms' do
       it 'returns error in json' do
         expect(response.body).to be_json_eql(%(
           { "errors": [
-            { "title": "Uri is not valid" },
             { "title": "Uri can't be blank" },
             { "title": "Uri hash can't be blank" }
           ]
@@ -213,6 +217,7 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms' do
             "alt_label": ["Uni"],
             "authority": "fast",
             "term_type": "external",
+            "harry_potter_reference": null,
             "classification": "Horses"
           }
         )).excluding('uuid')

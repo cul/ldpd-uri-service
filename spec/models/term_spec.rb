@@ -6,11 +6,11 @@ RSpec.describe Term, type: :model do
   describe 'when creating a external term' do
     let(:term) { FactoryBot.create(:external_term) }
 
-    it 'adds uri_hash' do
+    it 'sets uri_hash' do
       expect(term.uri_hash).to eql '37e37aa82a659464081b368efa3f06dc12e56bd07ed8237f4c4a05f401015e52'
     end
 
-    it 'add uuid' do
+    it 'sets uuid' do
       expect(term.uuid).not_to be blank?
     end
 
@@ -43,15 +43,15 @@ RSpec.describe Term, type: :model do
   describe 'when creating a local term' do
     let(:term) { FactoryBot.create(:local_term) }
 
-    it 'add local term uri' do
+    it 'sets local term uri' do
       expect(term.uri).to start_with 'https://example.com/term/'
     end
 
-    it 'adds uri_hash' do
+    it 'sets uri_hash' do
       expect(term.uri_hash).not_to be blank?
     end
 
-    it 'adds uuid' do
+    it 'sets uuid' do
       expect(term.uuid).not_to be blank?
     end
 
@@ -65,8 +65,8 @@ RSpec.describe Term, type: :model do
         Rails.application.config.local_uri_host = @host
       end
 
-      it 'adds error to instance' do
-        expect { term }.to raise_error ActiveRecord::RecordInvalid
+      it 'raises error' do
+        expect { term }.to raise_error 'Missing Rails.application.config.local_uri_host'
       end
     end
 
@@ -82,15 +82,15 @@ RSpec.describe Term, type: :model do
   describe 'when creating temporary term' do
     let(:term) { FactoryBot.create(:temp_term) }
 
-    it 'adds temporary term uri' do
+    it 'sets temporary term uri' do
       expect(term.uri).to start_with 'temp:'
     end
 
-    it 'adds uri_hash' do
+    it 'sets uri_hash' do
       expect(term.uri_hash).not_to be blank?
     end
 
-    it 'adds uuid' do
+    it 'sets uuid' do
       expect(term.uuid).not_to be blank?
     end
 
@@ -110,15 +110,33 @@ RSpec.describe Term, type: :model do
   end
 
   describe 'when creating a term' do
+    it 'fails if pref_label missing' do
+      expect {
+        FactoryBot.create(:external_term, pref_label: nil)
+      }.to raise_error ActiveRecord::RecordInvalid
+    end
+
+    it 'fails if term_type missing' do
+      expect {
+        FactoryBot.create(:external_term, term_type: nil)
+      }.to raise_error ActiveRecord::RecordInvalid
+    end
+
     it 'fails if term_type is invalid' do
       expect {
         FactoryBot.create(:external_term, term_type: 'not_valid')
       }.to raise_error ActiveRecord::RecordInvalid
     end
 
-    it 'fails if term_type is nil' do
+    it 'fails if custom_field is invalid' do
       expect {
-        FactoryBot.create(:external_term, term_type: '')
+        FactoryBot.create(:external_term, custom_fields: { 'fake_custom_field' => 'blahblahblah' })
+      }.to raise_error ActiveRecord::RecordInvalid
+    end
+
+    it 'fails if uuid is invalid' do
+      expect {
+        FactoryBot.create(:external_term, uuid: 'not-valid-at-all')
       }.to raise_error ActiveRecord::RecordInvalid
     end
   end

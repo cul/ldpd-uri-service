@@ -1,7 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe 'Querying terms', type: :request do
-  let(:vocabulary) { FactoryBot.create(:vocabulary) }
+  let(:vocabulary) do
+    FactoryBot.create(:vocabulary, custom_fields: {
+      harry_potter_reference: { label: 'Harry Potter Reference', data_type: 'boolean' }
+    })
+  end
 
   it 'for 2 character queries only returns results with exact matches' do
     term = FactoryBot.create(:external_term, vocabulary: vocabulary, pref_label: 'Me', alt_label: [])
