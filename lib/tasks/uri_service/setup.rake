@@ -1,6 +1,7 @@
 namespace :uri_service do
   namespace :setup do
     # Note: Don't include Rails environment for this task, since enviroment includes a check for the presence of database.yml
+    desc 'Generates configuration files'
     task :config_files do
       # database.yml
       database_yml_file = File.join(Rails.root, 'config/database.yml')
@@ -26,6 +27,17 @@ namespace :uri_service do
         }
       end
       File.open(solr_yml_file, 'w') { |f| f.write solr_yml.to_yaml }
+
+      # uri_service.yml
+      uri_service_file = File.join(Rails.root, 'config/uri_service.yml')
+      FileUtils.touch(uri_service_file) # Create if it doesn't exist
+      uri_service_yml = YAML.load_file(uri_service_file) || {}
+      uri_service_yml = {
+        'development' => { 'local_uri_host' => 'localhost:3000' },
+        'test' => { 'local_uri_host' => 'https://example.com' }
+      }
+
+      File.open(uri_service_file, 'w') { |f| f.write uri_service_yml.to_yaml }
     end
   end
 end

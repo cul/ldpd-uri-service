@@ -87,11 +87,16 @@ class Term < ApplicationRecord
     end
 
     def local_uri_host
-      if Rails.application.config.respond_to?(:local_uri_host) && Rails.application.config.local_uri_host.present?
-        host = Rails.application.config.local_uri_host.to_s
+      begin
+        configuration = Rails.application.config_for(:uri_service)
+      rescue
+        raise 'Error trying to load config/uri_service.yml'
+      end
+
+      if host = configuration.fetch('local_uri_host', nil)
         host.ends_with?('/') ? host : "#{host}/"
       else
-        raise StandardError, 'Missing Rails.application.config.local_uri_host'
+        raise StandardError, 'Missing local_uri_host in config/uri_service.yml'
       end
     end
 

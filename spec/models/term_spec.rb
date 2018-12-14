@@ -55,18 +55,13 @@ RSpec.describe Term, type: :model do
       expect(term.uuid).not_to be blank?
     end
 
-    context 'when missing Rails.application.config.local_uri_host' do
+    context 'when missing local_uri_host in config/uri_service.yml' do
       before do
-        @host = Rails.application.config.local_uri_host
-        Rails.application.config.local_uri_host = nil
-      end
-
-      after do
-        Rails.application.config.local_uri_host = @host
+        allow(Rails.application).to receive(:config_for).with(:uri_service).and_return({})
       end
 
       it 'raises error' do
-        expect { term }.to raise_error 'Missing Rails.application.config.local_uri_host'
+        expect { term }.to raise_error 'Missing local_uri_host in config/uri_service.yml'
       end
     end
 
