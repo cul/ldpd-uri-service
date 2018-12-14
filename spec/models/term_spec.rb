@@ -44,7 +44,7 @@ RSpec.describe Term, type: :model do
     let(:term) { FactoryBot.create(:local_term) }
 
     it 'sets local term uri' do
-      expect(term.uri).to start_with 'https://example.com/term/'
+      expect(term.uri).to start_with "#{Rails.application.config_for(:uri_service)['local_uri_host']}/term"
     end
 
     it 'sets uri_hash' do
