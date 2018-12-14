@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe 'Querying terms', type: :request do
+  include_examples 'authentication required', 'get', '/api/v1/vocabularies/mythical_creatures/terms'
+
   let(:vocabulary) do
     FactoryBot.create(:vocabulary, custom_fields: {
       harry_potter_reference: { label: 'Harry Potter Reference', data_type: 'boolean' }

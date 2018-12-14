@@ -11,6 +11,8 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms', type: :request do
   before { vocabulary }
 
   describe 'GET /api/v1/vocabularies/:string_key/terms/:uri' do
+    include_examples 'authentication required', 'get', '/api/v1/vocabularies/mythical_creatures/terms/http%3A%2F%2Fid.worldcat.org%2Ffast%2F1161301%2F'
+
     before do
       FactoryBot.create(:external_term,
         vocabulary: vocabulary,
@@ -72,6 +74,8 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms', type: :request do
   end
 
   describe 'POST /api/v1/vocabularies/:string_key/terms' do
+    include_examples 'authentication required', 'post', '/api/v1/vocabularies/mythical_creatures/terms'
+
     context 'when successfully creating a new external term' do
       before do
         post_with_auth '/api/v1/vocabularies/mythical_creatures/terms', params: {
@@ -200,6 +204,8 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms', type: :request do
   end
 
   describe 'PATCH /api/v1/vocabularies/:string_key/terms/:uri' do
+    include_context 'authentication required', 'patch', '/api/v1/vocabularies/mythical_creatures/terms/http%3A%2F%2Fid.worldcat.org%2Ffast%2F1161301%2F'
+
     context 'when updating alt_label' do
       let(:term) do
         FactoryBot.create(:external_term,
@@ -275,6 +281,8 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms', type: :request do
   end
 
   describe 'DELETE /api/v1/vocabularies/:string_key/terms/:uri' do
+    include_context 'authentication required', 'delete', '/api/v1/vocabularies/mythical_creatures/terms/http%3A%2F%2Fid.worldcat.org%2Ffast%2F1161301%2F'
+
     context 'when deleting term' do
       let(:uri) { 'https://example.com/unicorns' }
       let(:term) { FactoryBot.create(:external_term, uri: uri, vocabulary: vocabulary) }

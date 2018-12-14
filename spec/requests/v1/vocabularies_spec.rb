@@ -2,15 +2,11 @@ require 'rails_helper'
 
 RSpec.describe '/api/v1/vocabularies', type: :request do
   describe 'GET /api/v1/vocabularies' do
+    include_examples 'authentication required', 'get', '/api/v1/vocabularies'
+
     before do
       FactoryBot.create(:vocabulary)
       FactoryBot.create(:vocabulary, string_key: 'names', label: 'Names')
-    end
-
-    it 'requires authentication' do
-      get '/api/v1/vocabularies'
-      expect(JSON.parse(response.body)).to match('errors' => [ { 'title' => 'Unauthorized' } ])
-      expect(response.status).to be 401
     end
 
     it 'returns all vocabularies' do
@@ -25,13 +21,9 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
   end
 
   describe 'GET /api/v1/vocabularies/:string_key' do
-    before { FactoryBot.create(:vocabulary) }
+    include_examples 'authentication required', 'get', '/api/v1/vocabularies/subjects'
 
-    it 'requires authentication' do
-      get '/api/v1/vocabularies/subjects'
-      expect(JSON.parse(response.body)).to match('errors' => [ { 'title' => 'Unauthorized' } ])
-      expect(response.status).to be 401
-    end
+    before { FactoryBot.create(:vocabulary) }
 
     it 'returns one vocabulary' do
       get_with_auth '/api/v1/vocabularies/mythical_creatures'
@@ -47,19 +39,7 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
   end
 
   describe 'POST /api/v1/vocabularies' do
-    context 'when authentication is missing' do
-      before do
-        post '/api/v1/vocabularies', params: { string_key: 'collections', label: 'Collections' }
-      end
-
-      it 'returns an error message' do
-        expect(JSON.parse(response.body)).to match('errors' => [ { 'title' => 'Unauthorized' } ])
-      end
-
-      it 'returns 401' do
-        expect(response.status).to be 401
-      end
-    end
+    include_examples 'authentication required', 'post', '/api/v1/vocabularies'
 
     context 'when successfully creating a new vocabulary' do
       before do
@@ -107,21 +87,9 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
   end
 
   describe 'PATCH /api/v1/vocabularies/:string_key' do
+    include_examples 'authentication required', 'patch', '/api/v1/vocabularies/subjects'
+
     before { FactoryBot.create(:vocabulary) }
-
-    context 'when missing authentication' do
-      before do
-        patch '/api/v1/vocabularies/subjects', params: { label: 'FAST Subjects' }
-      end
-
-      it 'returns an error' do
-        expect(JSON.parse(response.body)).to match('errors' => [ { 'title' => 'Unauthorized' } ])
-      end
-
-      it 'returns 401' do
-        expect(response.status).to be 401
-      end
-    end
 
     context 'when updating label' do
       before do
@@ -168,20 +136,7 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
   end
 
   describe 'DELETE /api/v1/vocabularies/:string_key' do
-    context 'when missing authentication' do
-      before do
-        FactoryBot.create(:vocabulary)
-        delete '/api/v1/vocabularies/subjects'
-      end
-
-      it 'return an error' do
-        expect(JSON.parse(response.body)).to match('errors' => [ { 'title' => 'Unauthorized' } ])
-      end
-
-      it 'returns 401' do
-        expect(response.status).to be 401
-      end
-    end
+    include_examples 'authentication required', 'delete', '/api/v1/vocabularies/subjects'
 
     context 'when deleting vocabulary' do
       let(:vocabulary) { FactoryBot.create(:vocabulary) }
