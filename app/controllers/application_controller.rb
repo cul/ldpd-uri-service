@@ -21,7 +21,7 @@ class ApplicationController < ActionController::API
 
     def authenticate_token
       unless authentication_status == :ok
-        render json: { errors: [{ title: authentication_status.to_s.titlecase }] }.to_json,
+        render json: URIService::JSON.errors(authentication_status.to_s.titlecase),
                status: authentication_status
       end
     end
