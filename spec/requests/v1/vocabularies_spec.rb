@@ -129,9 +129,10 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
 
   describe 'DELETE /api/v1/vocabularies/:string_key' do
     context 'when deleting vocabulary' do
+      let(:vocabulary) { FactoryBot.create(:vocabulary) }
+
       before do
-        FactoryBot.create(:vocabulary)
-        delete '/api/v1/vocabularies/mythical_creatures'
+        delete "/api/v1/vocabularies/#{vocabulary.string_key}"
       end
 
       it 'returns 204' do
@@ -139,7 +140,7 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
       end
 
       it 'removes vocabulary from database' do
-        expect(Vocabulary.find_by(string_key: 'mythical_creatures')).to be nil
+        expect(Vocabulary.find_by(string_key: vocabulary.string_key)).to be nil
       end
     end
 
