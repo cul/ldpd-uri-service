@@ -1,6 +1,11 @@
 # Require simplecov/coveralls before anything else.
 require 'simplecov'
 require 'coveralls'
+
+# Removing output removed the use of a gem that defines 'Term', which in turn
+# does not allow us to test our Term model.
+Coveralls::Output.no_color = true
+
 Coveralls.wear!('rails')
 
 # Use both the coveralls formatter (for sending results to coveralls) and the
@@ -46,6 +51,8 @@ end
 RSpec.configure do |config|
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
+
+  config.include JsonSpec::Helpers
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false

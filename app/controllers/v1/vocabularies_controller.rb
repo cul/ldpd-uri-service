@@ -1,17 +1,15 @@
 module V1
   class VocabulariesController < ApplicationController
-    SHOW_FIELDS = [:string_key, :label, :custom_fields].freeze
-
     # GET /vocabularies
     def index
       vocabularies = Vocabulary.all
-      render json: { vocabularies: vocabularies.map { |v| v.as_json(only: SHOW_FIELDS) } }.to_json
+      render json: { vocabularies: vocabularies.map(&:to_api) }.to_json
     end
 
     # GET /vocabularies/:string_key
     def show
       if (vocabulary = Vocabulary.find_by(string_key: params[:string_key]))
-        render json: vocabulary.to_json(only: SHOW_FIELDS), status: 200
+        render json: vocabulary.to_api, status: 200
       else
         render json: { errors: [{ title: 'Not Found' }] }.to_json, status: 404
       end
@@ -21,7 +19,7 @@ module V1
     def create
       vocabulary = Vocabulary.new(create_params)
       if vocabulary.save
-        render json: vocabulary.to_json(only: SHOW_FIELDS), status: 201
+        render json: vocabulary.to_api, status: 201
       else
         render json: { errors: vocabulary.errors.full_messages.map { |e| { title: e } } }, status: 400 # each error should be its own error
       end
@@ -34,7 +32,7 @@ module V1
       if vocabulary.nil?
         render json: { errors: [{ title: 'Not Found' }] }, status: 404
       elsif vocabulary.update(update_params)
-        render json: vocabulary.to_json(only: SHOW_FIELDS), status: 200
+        render json: vocabulary.to_api, status: 200
       else
         render json: { errors: vocabulary.errors.full_messages.map { |e| { title: e } } }, status: 400
       end

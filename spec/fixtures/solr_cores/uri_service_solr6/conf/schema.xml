@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <schema name="UriService" version="1.0">
 
-  <uniqueKey>uri</uniqueKey>
+  <uniqueKey>uuid</uniqueKey>
 
   <!-- If you remove this field, you must _also_ disable the update log in solrconfig.xml
      or Solr won't start. _version_ and update log are required for SolrCloud
@@ -9,13 +9,17 @@
   <field name="_version_" type="long" indexed="true" stored="true" multiValued="false"/>
 
   <!-- Main fields -->
-  <field name="uri"                      type="string" stored="true" indexed="true" multiValued="false" required="true"/>
-  <field name="value" 					         type="string" stored="true" indexed="true" multiValued="false" required="true"/>
-  <field name="vocabulary_string_key"    type="string" stored="true" indexed="true" multiValued="false" required="true"/>
-  <field name="term_type" 					     type="string" stored="true" indexed="true" multiValued="false" required="true"/>
-  <field name="authority"				         type="string" stored="true" indexed="true" multiValued="false" required="false"/>
+  <field name="uuid"          type="string" stored="true" indexed="true" multiValued="false" required="true"/>
+  <field name="uri"           type="string" stored="true" indexed="true" multiValued="false" required="true"/>
+  <field name="pref_label"    type="string" stored="true" indexed="true" multiValued="false" required="true"/>
+  <field name="alt_label"     type="string" stored="true" indexed="true" multiValued="true"  required="false"/>
+  <field name="vocabulary"    type="string" stored="true" indexed="true" multiValued="false" required="true"/>
+  <field name="term_type"     type="string" stored="true" indexed="true" multiValued="false" required="true"/>
+  <field name="authority"     type="string" stored="true" indexed="true" multiValued="false" required="false"/>
+  <field name="custom_fields" type="string" stored="true" indexed="false" multiValued="false" required="true"/>
 
-  <field name="timestamp" 				type="date" indexed="true" stored="true" default="NOW" multiValued="false"/>
+
+  <field name="timestamp"  type="date" indexed="true" stored="true" default="NOW" multiValued="false"/>
 
   <!-- Suggest fields -->
   <dynamicField name="*_suggest" type="text_suggest" stored="false" indexed="true" multiValued="false"/>
@@ -64,22 +68,14 @@
   <field name="text" type="text" indexed="true" stored="false" multiValued="true"/>
 
   <!-- suggest copyFields -->
-  <copyField source="value" dest="value_suggest" />
-  <copyField source="value" dest="value_suggest_edge" />
-  <copyField source="value" dest="value_suggest_ngram" />
+  <copyField source="pref_label" dest="pref_label_suggest" />
+  <copyField source="pref_label" dest="pref_label_suggest_edge" />
+  <copyField source="pref_label" dest="pref_label_suggest_ngram" />
+  <copyField source="alt_label" dest="alt_label_suggest" />
+  <copyField source="alt_label" dest="alt_label_suggest_edge" />
+  <copyField source="alt_label" dest="alt_label_suggest_ngram" />
   <!-- sort copyFields -->
-  <copyField source="value" dest="value_ssort" />
-
-
-
-
-
-
-
-
-
-
-
+  <copyField source="pref_label" dest="pref_label_ssort" />
 
   <fieldType name="string" class="solr.StrField" sortMissingLast="true" />
   <fieldType name="boolean" class="solr.BoolField" sortMissingLast="true"/>

@@ -31,5 +31,9 @@ module UriService
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+
+    # Custom directories with classes and modules you want to be eager loaded.
+    # After Rails 5, using autoload_paths is discouraged.
+    config.eager_load_paths += %W(#{config.root}/lib)
   end
 end
