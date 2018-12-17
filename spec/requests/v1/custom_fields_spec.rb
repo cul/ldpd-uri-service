@@ -112,12 +112,12 @@ RSpec.describe 'Custom Fields Requests', type: :request do
 
       it 'returns error' do
         expect(response.body).to be_json_eql(%(
-          { "errors": [{ "title": "Vocabulary string key invalid." }] }
+          { "errors": [{ "title": "Vocabulary not found." }] }
         ))
       end
 
-      it 'returns 400' do
-        expect(response.status).to be 400
+      it 'returns 404' do
+        expect(response.status).to be 404
       end
     end
 

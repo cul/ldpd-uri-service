@@ -52,16 +52,6 @@ module V1
         end
       end
 
-      def valid_vocabulary?
-        if vocabulary.blank?
-          render json: URIService::JSON.errors('Vocabulary string key invalid.'), status: 400
-        end
-      end
-
-      def vocabulary
-        @vocabulary ||= Vocabulary.find_by(string_key: params[:vocabulary_string_key])
-      end
-
       def create_params
         params.permit(:field_key, :label, :data_type)
       end

@@ -1,6 +1,6 @@
 module V1
   class TermsController < ApplicationController
-    # TODO: Check that vocabulary is valid, if not should render and error
+    before_action :valid_vocabulary?
 
     # TODO: force json type
 
@@ -104,10 +104,6 @@ module V1
           'pref_label', 'alt_label', 'term_type'
         ].concat(custom_fields.keys)
         params.keys.all? { |i| valid_params.include?(i) }
-      end
-
-      def vocabulary
-        @vocabulary ||= Vocabulary.find_by(string_key: params['vocabulary_string_key'])
       end
 
       def custom_fields
