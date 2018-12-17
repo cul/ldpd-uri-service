@@ -2,8 +2,6 @@ module V1
   class TermsController < ApplicationController
     before_action :valid_vocabulary?
 
-    # TODO: force json type
-
     # GET /vocabularies/:string_key/terms
     def index
       if valid_search_params?
@@ -100,8 +98,8 @@ module V1
 
       def valid_search_params?
         valid_params = [
-          'action', 'controller', 'vocabulary_string_key', 'q', 'uri', 'authority',
-          'pref_label', 'alt_label', 'term_type'
+          'action', 'controller', 'format', 'vocabulary_string_key', 'q', 'uri',
+          'authority', 'pref_label', 'alt_label', 'term_type'
         ].concat(custom_fields.keys)
         params.keys.all? { |i| valid_params.include?(i) }
       end

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms' do
+RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms', type: :request do
   let(:vocabulary) do
     FactoryBot.create(:vocabulary, custom_fields: {
       classification: { label: 'Classification', data_type: 'string' },
