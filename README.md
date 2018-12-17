@@ -1,6 +1,5 @@
 # URI Service (Application)
-
-[![Coverage Status](https://coveralls.io/repos/github/cul/ldpd-uri-service/badge.svg?branch=master)](https://coveralls.io/github/cul/ldpd-uri-service?branch=master)
+[![Build Status](https://travis-ci.org/cul/ldpd-uri-service.svg?branch=master)](https://travis-ci.org/cul/ldpd-uri-service) [![Coverage Status](https://coveralls.io/repos/github/cul/ldpd-uri-service/badge.svg?branch=master)](https://coveralls.io/github/cul/ldpd-uri-service?branch=master)
 
 **URI Service** is a standalone Rails 5 application that creates/stores local and temporary terms and caches external URI terms. To start the application's only interface will be a JSON api, though we see expanding the application to include html pages for local terms.
 
