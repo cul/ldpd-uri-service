@@ -72,7 +72,7 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
           {
             "errors": [
               { "title": "String key can't be blank" },
-              { "title": "String key only allows lowercase alphanumeric characters and underscores" }
+              { "title": "String key only allows lowercase alphanumeric characters and underscores and must start with a lowercase letter" }
             ]
           }
         ))

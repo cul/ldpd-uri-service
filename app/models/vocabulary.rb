@@ -10,7 +10,7 @@ class Vocabulary < ApplicationRecord
 
   validates :string_key, presence: true, uniqueness: true, format: {
     with: ALPHANUMERIC_UNDERSCORE_KEY_REGEX,
-    message: 'only allows lowercase alphanumeric characters and underscores'
+    message: 'only allows lowercase alphanumeric characters and underscores and must start with a lowercase letter'
   }
   validates :label,      presence: true
   validate :validate_custom_fields
@@ -27,7 +27,7 @@ class Vocabulary < ApplicationRecord
     if field_key.blank?
       raise 'field_key cannot be blank'
     elsif custom_fields[field_key].present?
-      raise 'field_key cannot be added because its already a custom field'
+      raise 'field_key cannot be added because it\'s already a custom field'
     else
       custom_fields[field_key] = { data_type: options[:data_type], label: options[:label] }
     end
@@ -58,11 +58,11 @@ class Vocabulary < ApplicationRecord
     def validate_custom_fields
       custom_fields.each do |field_key, info|
         if RESERVED_FIELD_NAMES.include? field_key
-          errors.add(:custom_fields, 'field_key cannot be a reserved field name')
+          errors.add(:custom_fields, "#{field_key} is a reserved field name and cannot be used")
         end
 
         unless ALPHANUMERIC_UNDERSCORE_KEY_REGEX.match? field_key
-          errors.add(:custom_fields, 'field_key can only contain lowercase alphanumeric characters and underscores')
+          errors.add(:custom_fields, 'field_key can only contain lowercase alphanumeric characters and underscores and must start with a lowercase letter')
         end
 
         if info[:label].blank? || info[:data_type].blank?

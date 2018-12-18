@@ -7,7 +7,7 @@ RSpec.describe Vocabulary, type: :model do
 
       it 'returns validation error' do
         expect(vocabulary.save).to be false
-        expect(vocabulary.errors.full_messages).to include 'String key only allows lowercase alphanumeric characters and underscores'
+        expect(vocabulary.errors.full_messages).to include 'String key only allows lowercase alphanumeric characters and underscores and must start with a lowercase letter'
       end
     end
 
@@ -16,7 +16,7 @@ RSpec.describe Vocabulary, type: :model do
 
       it 'returns validation error' do
         expect(vocabulary.save).to be false
-        expect(vocabulary.errors.full_messages).to include 'String key only allows lowercase alphanumeric characters and underscores'
+        expect(vocabulary.errors.full_messages).to include 'String key only allows lowercase alphanumeric characters and underscores and must start with a lowercase letter'
       end
     end
 
@@ -25,7 +25,7 @@ RSpec.describe Vocabulary, type: :model do
 
       it 'returns validation error' do
         expect(vocabulary.save).to be false
-        expect(vocabulary.errors.full_messages).to include 'String key only allows lowercase alphanumeric characters and underscores'
+        expect(vocabulary.errors.full_messages).to include 'String key only allows lowercase alphanumeric characters and underscores and must start with a lowercase letter'
       end
     end
 
@@ -56,11 +56,11 @@ RSpec.describe Vocabulary, type: :model do
 
       it 'returns validation error' do
         expect(vocabulary.save).to be false
-        expect(vocabulary.errors.full_messages).to include 'Custom fields field_key cannot be a reserved field name'
+        expect(vocabulary.errors.full_messages).to include 'Custom fields authority is a reserved field name and cannot be used'
       end
     end
 
-    context 'when custom_field field_key starts contains invalid characters' do
+    context 'when custom_field field_key starts with or contains invalid characters' do
       let(:vocabulary) do
         FactoryBot.build(
           :vocabulary, custom_fields: { AUTHORITY: { data_type: 'string', label: 'Authority' } }
@@ -69,7 +69,7 @@ RSpec.describe Vocabulary, type: :model do
 
       it 'returns validation error' do
         expect(vocabulary.save).to be false
-        expect(vocabulary.errors.full_messages).to include 'Custom fields field_key can only contain lowercase alphanumeric characters and underscores'
+        expect(vocabulary.errors.full_messages).to include 'Custom fields field_key can only contain lowercase alphanumeric characters and underscores and must start with a lowercase letter'
       end
     end
 
@@ -132,7 +132,7 @@ RSpec.describe Vocabulary, type: :model do
       end
 
       it 'raises an error' do
-        expect { vocabulary.add_custom_field(field_key: 'classification') }.to raise_error 'field_key cannot be added because its already a custom field'
+        expect { vocabulary.add_custom_field(field_key: 'classification') }.to raise_error 'field_key cannot be added because it\'s already a custom field'
       end
     end
   end

@@ -90,7 +90,7 @@ RSpec.describe 'Custom Fields Requests', type: :request do
 
       it 'returns error' do
         expect(response.body).to be_json_eql(%(
-          { "errors": [{ "title": "Custom fields field_key cannot be a reserved field name" }] }
+          { "errors": [{ "title": "Custom fields term_type is a reserved field name and cannot be used" }] }
         ))
       end
 
@@ -245,7 +245,7 @@ RSpec.describe 'Custom Fields Requests', type: :request do
       end
     end
 
-    context 'when deleting custom field that doesn\'t exists' do
+    context 'when deleting custom field that doesn\'t exist' do
       before do
         delete "/api/v1/vocabularies/#{vocabulary.string_key}/custom_fields/fake_field"
       end
