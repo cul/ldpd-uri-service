@@ -29,7 +29,7 @@ class ApplicationController < ActionController::API
     def authentication_status
       status = :unauthorized
       authenticate_with_http_token do |token, options|
-        Rails.application.config_for(:uri_service).fetch('api_keys', []).tap do |valid_api_key|
+        URIService.api_keys.tap do |valid_api_key|
           status = (valid_api_key.include?(token)) ? :ok : :forbidden
         end
       end
