@@ -40,7 +40,7 @@ class Vocabulary < ApplicationRecord
       raise 'field_key cannot be blank'
     elsif custom_fields[field_key].blank?
       raise 'field_key must be present in order to update custom field'
-    else
+    elsif options.key?(:label) # if new label given, update label
       custom_fields[field_key][:label] = options[:label]
     end
   end

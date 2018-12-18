@@ -157,6 +157,18 @@ RSpec.describe Vocabulary, type: :model do
         }.to raise_error 'field_key must be present in order to update custom field'
       end
     end
+
+    context 'when label not present' do
+      before do
+        vocabulary.update_custom_field(field_key: 'classification')
+        vocabulary.save
+        vocabulary.reload
+      end
+
+      it 'does not update label' do
+        expect(vocabulary.custom_fields['classification']['label']).to eql 'Classification'
+      end
+    end
   end
 
   describe '#delete_custom_field' do
