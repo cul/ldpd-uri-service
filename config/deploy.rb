@@ -36,4 +36,5 @@ set :linked_files, fetch(:linked_files, []).push(
   'config/database.yml',
   'config/solr.yml',
   'config/secrets.yml',
+  'config/uri_service.yml'
 )
