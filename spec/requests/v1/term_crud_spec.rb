@@ -60,7 +60,7 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms', type: :request do
 
     context 'when vocabulary doesn\'t exist' do
       before do
-        get '/api/v1/vocabularies/fantastic_beasts/terms/http%3A%2F%2Fid.worldcat.org%2Ffast%2Fnot_valid%2F'
+        get_with_auth '/api/v1/vocabularies/fantastic_beasts/terms/http%3A%2F%2Fid.worldcat.org%2Ffast%2Fnot_valid%2F'
       end
 
       it 'returns error in json' do

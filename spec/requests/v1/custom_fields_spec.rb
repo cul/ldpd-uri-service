@@ -4,9 +4,11 @@ RSpec.describe 'Custom Fields Requests', type: :request do
   let(:vocabulary) { FactoryBot.create(:vocabulary) }
 
   describe 'POST /api/v1/vocabularies/:string_key/custom_fields' do
+    include_examples 'authentication required', 'post', '/api/v1/vocabularies/mythical_creatures/custom_fields'
+
     context 'when adding a new custom field' do
       before do
-        post "/api/v1/vocabularies/#{vocabulary.string_key}/custom_fields",
+        post_with_auth "/api/v1/vocabularies/#{vocabulary.string_key}/custom_fields",
              params: { field_key: 'harry_potter_reference', label: 'Harry Potter Reference', data_type: 'boolean' }
       end
 
@@ -33,7 +35,7 @@ RSpec.describe 'Custom Fields Requests', type: :request do
         vocabulary.custom_fields = { 'harry_potter_reference' => { data_type: 'boolean', label: 'Harry Potter Reference' } }
         vocabulary.save
 
-        post "/api/v1/vocabularies/#{vocabulary.string_key}/custom_fields",
+        post_with_auth "/api/v1/vocabularies/#{vocabulary.string_key}/custom_fields",
              params: { field_key: 'harry_potter_reference', label: 'Harry Potter Reference', data_type: 'string' }
       end
 
@@ -57,7 +59,7 @@ RSpec.describe 'Custom Fields Requests', type: :request do
 
     context 'when adding a custom field without a data type' do
       before do
-        post "/api/v1/vocabularies/#{vocabulary.string_key}/custom_fields",
+        post_with_auth "/api/v1/vocabularies/#{vocabulary.string_key}/custom_fields",
              params: { field_key: 'harry_potter_reference', label: 'Harry Potter Reference' }
       end
 
@@ -84,7 +86,7 @@ RSpec.describe 'Custom Fields Requests', type: :request do
 
     context 'when adding a custom field that uses a reserved field name' do
       before do
-        post "/api/v1/vocabularies/#{vocabulary.string_key}/custom_fields",
+        post_with_auth "/api/v1/vocabularies/#{vocabulary.string_key}/custom_fields",
              params: { field_key: 'term_type', label: 'Harry Potter Reference', data_type: 'boolean' }
       end
 
@@ -106,7 +108,7 @@ RSpec.describe 'Custom Fields Requests', type: :request do
 
     context 'when adding custom field to vocabulary that doesn\'t exist' do
       before do
-        post '/api/v1/vocabularies/invalid/custom_fields',
+        post_with_auth '/api/v1/vocabularies/invalid/custom_fields',
              params: { field_key: 'harry_potter_reference', label: 'Harry Potter Reference', data_type: 'boolean' }
       end
 
@@ -123,7 +125,7 @@ RSpec.describe 'Custom Fields Requests', type: :request do
 
     context 'when adding a custom field without a field_key' do
       before do
-        post "/api/v1/vocabularies/#{vocabulary.string_key}/custom_fields",
+        post_with_auth "/api/v1/vocabularies/#{vocabulary.string_key}/custom_fields",
              params: { label: 'Harry Potter Reference', data_type: 'boolean' }
       end
 
@@ -140,12 +142,14 @@ RSpec.describe 'Custom Fields Requests', type: :request do
   end
 
   describe 'PATCH /api/v1/vocabularies/:string_key/custom_fields/:field_key' do
+    include_examples 'authentication required', 'patch', '/api/v1/vocabularies/mythical_creatures/custom_fields/harry_potter_reference'
+
     context 'when updating custom field that exists' do
       before do
         vocabulary.custom_fields = { 'harry_potter_reference' => { data_type: 'boolean', label: 'Harry Potter Reference' } }
         vocabulary.save
 
-        patch "/api/v1/vocabularies/#{vocabulary.string_key}/custom_fields/harry_potter_reference",
+        patch_with_auth "/api/v1/vocabularies/#{vocabulary.string_key}/custom_fields/harry_potter_reference",
               params: { label: 'Wizarding World Reference' }
       end
 
@@ -176,7 +180,7 @@ RSpec.describe 'Custom Fields Requests', type: :request do
         vocabulary.custom_fields = { 'harry_potter_reference' => { data_type: 'boolean', label: 'Harry Potter Reference' } }
         vocabulary.save
 
-        patch "/api/v1/vocabularies/#{vocabulary.string_key}/custom_fields/harry_potter_reference",
+        patch_with_auth "/api/v1/vocabularies/#{vocabulary.string_key}/custom_fields/harry_potter_reference",
               params: { label: '' }
       end
 
@@ -198,7 +202,7 @@ RSpec.describe 'Custom Fields Requests', type: :request do
 
     context 'when updating custom field that does not exist' do
       before do
-        patch "/api/v1/vocabularies/#{vocabulary.string_key}/custom_fields/harry_potter_reference",
+        patch_with_auth "/api/v1/vocabularies/#{vocabulary.string_key}/custom_fields/harry_potter_reference",
               params: { label: 'Wizarding World Reference' }
       end
 
@@ -220,6 +224,8 @@ RSpec.describe 'Custom Fields Requests', type: :request do
   end
 
   describe 'DELETE /api/v1/vocabularies/:string_key/custom_fields/:field_key' do
+    include_examples 'authentication required', 'delete', '/api/v1/vocabularies/mythical_creatures/custom_fields/harry_potter_reference'
+
     before do
       vocabulary.custom_fields = {
         'harry_potter_reference' => { data_type: 'boolean', label: 'Harry Potter Reference' },
@@ -230,7 +236,7 @@ RSpec.describe 'Custom Fields Requests', type: :request do
 
     context 'when deleting custom field that exists' do
       before do
-        delete "/api/v1/vocabularies/#{vocabulary.string_key}/custom_fields/harry_potter_reference"
+        delete_with_auth "/api/v1/vocabularies/#{vocabulary.string_key}/custom_fields/harry_potter_reference"
       end
 
       it 'returns 204' do
@@ -247,7 +253,7 @@ RSpec.describe 'Custom Fields Requests', type: :request do
 
     context 'when deleting custom field that doesn\'t exist' do
       before do
-        delete "/api/v1/vocabularies/#{vocabulary.string_key}/custom_fields/fake_field"
+        delete_with_auth "/api/v1/vocabularies/#{vocabulary.string_key}/custom_fields/fake_field"
       end
 
       it 'returns 404' do
