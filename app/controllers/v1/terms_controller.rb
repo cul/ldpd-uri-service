@@ -1,8 +1,6 @@
 module V1
   class TermsController < ApplicationController
-    # TODO: Check that vocabulary is valid, if not should render and error
-
-    # TODO: force json type
+    before_action :valid_vocabulary?
 
     # GET /vocabularies/:string_key/terms
     def index
@@ -100,14 +98,10 @@ module V1
 
       def valid_search_params?
         valid_params = [
-          'action', 'controller', 'vocabulary_string_key', 'q', 'uri', 'authority',
-          'pref_label', 'alt_label', 'term_type'
+          'action', 'controller', 'format', 'vocabulary_string_key', 'q', 'uri',
+          'authority', 'pref_label', 'alt_label', 'term_type'
         ].concat(custom_fields.keys)
         params.keys.all? { |i| valid_params.include?(i) }
-      end
-
-      def vocabulary
-        @vocabulary ||= Vocabulary.find_by(string_key: params['vocabulary_string_key'])
       end
 
       def custom_fields

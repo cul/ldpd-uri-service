@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms' do
+RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms', type: :request do
   let(:vocabulary) do
     FactoryBot.create(:vocabulary, custom_fields: {
       classification: { label: 'Classification', data_type: 'string' },
@@ -49,6 +49,20 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms' do
 
       it 'returns error in json' do
         expect(response.body).to be_json_eql(%({ "errors": [{ "title": "Not Found" }] }))
+      end
+
+      it 'returns 404' do
+        expect(response.status).to be 404
+      end
+    end
+
+    context 'when vocabulary doesn\'t exist' do
+      before do
+        get '/api/v1/vocabularies/fantastic_beasts/terms/http%3A%2F%2Fid.worldcat.org%2Ffast%2Fnot_valid%2F'
+      end
+
+      it 'returns error in json' do
+        expect(response.body).to be_json_eql(%({ "errors": [{ "title": "Vocabulary not found." }] }))
       end
 
       it 'returns 404' do
