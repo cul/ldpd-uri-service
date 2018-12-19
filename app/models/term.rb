@@ -16,6 +16,7 @@ class Term < ApplicationRecord
   validates :term_type, inclusion: { in: TERM_TYPES }
   validates :uri,  format: { with: /\A#{URI.regexp}\z/ },
                    if: Proc.new { |t| t.uri? && (t.term_type == LOCAL || t.term_type == EXTERNAL) }
+  validates :uri, uniqueness: { scope: :vocabulary }
   validates :uuid, format: { with: /\A\h{8}-\h{4}-4\h{3}-[89ab]\h{3}-\h{12}\z/ },
                    if: Proc.new { |t| t.uuid }
   validate  :uuid_uri_and_term_type_unchanged, :validate_custom_fields
