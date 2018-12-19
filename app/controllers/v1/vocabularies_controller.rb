@@ -17,7 +17,7 @@ module V1
       if (vocabulary = Vocabulary.find_by(string_key: params[:string_key]))
         render json: vocabulary.to_api, status: 200
       else
-        render json: { errors: [{ title: 'Not Found' }] }.to_json, status: 404
+        render json: URIService::JSON.errors('Not Found'), status: 404
       end
     end
 
@@ -27,7 +27,7 @@ module V1
       if vocabulary.save
         render json: vocabulary.to_api, status: 201
       else
-        render json: { errors: vocabulary.errors.full_messages.map { |e| { title: e } } }, status: 400 # each error should be its own error
+        render json: URIService::JSON.errors(vocabulary.errors.full_messages), status: 400
       end
     end
 
@@ -40,7 +40,7 @@ module V1
       elsif vocabulary.update(update_params)
         render json: vocabulary.to_api, status: 200
       else
-        render json: { errors: vocabulary.errors.full_messages.map { |e| { title: e } } }, status: 400
+        render json: URIService::JSON.errors(vocabulary.errors.full_messages), status: 400
       end
     end
 
@@ -49,11 +49,11 @@ module V1
       vocabulary = Vocabulary.find_by(string_key: params[:string_key])
 
       if vocabulary.nil?
-        render json: { errors: [{ title: 'Not Found' }] }, status: 404
+        render json: URIService::JSON.errors('Not Found'), status: 404
       elsif vocabulary.destroy
         head :no_content
       else
-        render json: { errors: [{ title: 'Deleting was unsuccessful.' }] }, status: 500
+        render json: URIService::JSON.errors('Deleting was unsuccessful.'), status: 500
       end
     end
 
