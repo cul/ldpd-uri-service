@@ -67,7 +67,7 @@ class Term < ApplicationRecord
     def set_uri
       case term_type
       when LOCAL
-        self.uri = "#{local_uri_host}term/#{self.uuid}"
+        self.uri = "#{URIService.local_uri_host}term/#{self.uuid}"
       when TEMPORARY
         self.uri = URI(TEMPORARY_URI_BASE + Digest::SHA256.hexdigest(self.vocabulary.string_key + self.pref_label)).to_s
       end
@@ -84,20 +84,6 @@ class Term < ApplicationRecord
       errors.add(:uuid, 'Change of uuid not allowed!') if uuid_changed?
       errors.add(:uri, 'Change of uri not allowed!') if uri_changed?
       errors.add(:term_type, 'Change of term_type not allowed!') if term_type_changed?
-    end
-
-    def local_uri_host
-      begin
-        configuration = Rails.application.config_for(:uri_service)
-      rescue
-        raise 'Error trying to load config/uri_service.yml'
-      end
-
-      if host = configuration.fetch('local_uri_host', nil)
-        host.ends_with?('/') ? host : "#{host}/"
-      else
-        raise StandardError, 'Missing local_uri_host in config/uri_service.yml'
-      end
     end
 
     def update_solr # If this is unsuccessful the solr core will be out of sync

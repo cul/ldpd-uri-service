@@ -33,8 +33,8 @@ namespace :uri_service do
       FileUtils.touch(uri_service_file) # Create if it doesn't exist
       uri_service_yml = YAML.load_file(uri_service_file) || {}
       uri_service_yml = {
-        'development' => { 'local_uri_host' => 'localhost:3000' },
-        'test' => { 'local_uri_host' => 'https://example.com' }
+        'development' => { 'local_uri_host' => 'localhost:3000', 'api_keys' => ['firstdevkey'] },
+        'test' => { 'local_uri_host' => 'https://example.com', 'api_keys' => ['firsttestkey'] }
       }
 
       File.open(uri_service_file, 'w') { |f| f.write uri_service_yml.to_yaml }

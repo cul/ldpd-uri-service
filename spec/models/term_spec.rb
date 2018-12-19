@@ -44,7 +44,7 @@ RSpec.describe Term, type: :model do
     let(:term) { FactoryBot.create(:local_term) }
 
     it 'sets local term uri' do
-      expect(term.uri).to start_with "#{Rails.application.config_for(:uri_service)['local_uri_host']}/term"
+      expect(term.uri).to start_with "#{URIService.local_uri_host}term"
     end
 
     it 'sets uri_hash' do
@@ -57,7 +57,7 @@ RSpec.describe Term, type: :model do
 
     context 'when missing local_uri_host in config/uri_service.yml' do
       before do
-        allow(Rails.application).to receive(:config_for).with(:uri_service).and_return({})
+        stub_const('URI_SERVICE_CONFIG', {})
       end
 
       it 'raises error' do

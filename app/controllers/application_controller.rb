@@ -1,5 +1,7 @@
 class ApplicationController < ActionController::API
-  before_action :ensure_json_request
+  include ActionController::HttpAuthentication::Token::ControllerMethods
+
+  before_action :authenticate_token, :ensure_json_request
 
   private
     def vocabulary
@@ -15,5 +17,22 @@ class ApplicationController < ActionController::API
     def ensure_json_request
       return if request.format == :json
       head :not_acceptable
+    end
+
+    def authenticate_token
+      unless authentication_status == :ok
+        render json: URIService::JSON.errors(authentication_status.to_s.titlecase),
+               status: authentication_status
+      end
+    end
+
+    def authentication_status
+      status = :unauthorized
+      authenticate_with_http_token do |token, options|
+        URIService.api_keys.tap do |valid_api_key|
+          status = (valid_api_key.include?(token)) ? :ok : :forbidden
+        end
+      end
+      status
     end
 end

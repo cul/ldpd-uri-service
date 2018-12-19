@@ -65,7 +65,7 @@ RSpec.describe 'Filtering terms', type: :request do
     include_context 'json includes pagination', 1, 25, 3
 
     before do
-      get '/api/v1/vocabularies/mythical_creatures/terms'
+      get_with_auth '/api/v1/vocabularies/mythical_creatures/terms'
     end
 
     it 'returns 200' do
@@ -78,7 +78,7 @@ RSpec.describe 'Filtering terms', type: :request do
     include_context 'json includes pagination', 1, 25, 1
 
     before do
-      get '/api/v1/vocabularies/mythical_creatures/terms?q=dragon'
+      get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?q=dragon'
     end
   end
 
@@ -87,7 +87,7 @@ RSpec.describe 'Filtering terms', type: :request do
     include_context 'json includes pagination', 1, 25, 1
 
     before do
-      get '/api/v1/vocabularies/mythical_creatures/terms?authority=fast'
+      get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?authority=fast'
     end
   end
 
@@ -96,7 +96,7 @@ RSpec.describe 'Filtering terms', type: :request do
     include_context 'json includes pagination', 1, 25, 1
 
     before do
-      get '/api/v1/vocabularies/mythical_creatures/terms?uri=http%3A%2F%2Fid.worldcat.org%2Ffast%2F1161301%2F'
+      get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?uri=http%3A%2F%2Fid.worldcat.org%2Ffast%2F1161301%2F'
     end
   end
 
@@ -105,7 +105,7 @@ RSpec.describe 'Filtering terms', type: :request do
     include_context 'json includes pagination', 1, 25, 1
 
     before do
-      get '/api/v1/vocabularies/mythical_creatures/terms?pref_label=Yeti'
+      get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?pref_label=Yeti'
     end
   end
 
@@ -114,7 +114,7 @@ RSpec.describe 'Filtering terms', type: :request do
     include_context 'json includes pagination', 1, 25, 1
 
     before do
-      get '/api/v1/vocabularies/mythical_creatures/terms?alt_label=Uni'
+      get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?alt_label=Uni'
     end
   end
 
@@ -123,7 +123,7 @@ RSpec.describe 'Filtering terms', type: :request do
     include_context 'json includes pagination', 1, 25, 1
 
     before do
-      get '/api/v1/vocabularies/mythical_creatures/terms?term_type=temporary'
+      get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?term_type=temporary'
     end
   end
 
@@ -133,13 +133,13 @@ RSpec.describe 'Filtering terms', type: :request do
     include_context 'json includes pagination', 1, 25, 2
 
     before do
-      get '/api/v1/vocabularies/mythical_creatures/terms?harry_potter_reference=true'
+      get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?harry_potter_reference=true'
     end
   end
 
   context 'by invalid custom field' do
     before do
-      get '/api/v1/vocabularies/mythical_creatures/terms?dangerous=true'
+      get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?dangerous=true'
     end
 
     it 'returns no results' do

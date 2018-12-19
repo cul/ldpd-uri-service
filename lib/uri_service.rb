@@ -15,4 +15,16 @@ module URIService
   def self.solr_suffix(data_type)
     SOLR_SUFFIX[data_type]
   end
+
+  def self.api_keys
+    URI_SERVICE_CONFIG.fetch('api_keys', [])
+  end
+
+  def self.local_uri_host
+    if host = URI_SERVICE_CONFIG['local_uri_host']
+      host.ends_with?('/') ? host : "#{host}/"
+    else
+      raise 'Missing local_uri_host in config/uri_service.yml'
+    end
+  end
 end
