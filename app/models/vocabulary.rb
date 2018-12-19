@@ -17,10 +17,6 @@ class Vocabulary < ApplicationRecord
 
   store :custom_fields, coder: JSON
 
-  def to_api
-    as_json(only: [:string_key, :label, :custom_fields])
-  end
-
   def add_custom_field(options = {})
     field_key = options[:field_key]
 
