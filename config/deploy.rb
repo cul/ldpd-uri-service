@@ -35,6 +35,6 @@ set :passenger_restart_with_touch, true
 set :linked_files, fetch(:linked_files, []).push(
   'config/database.yml',
   'config/solr.yml',
-  'config/secrets.yml',
+  'config/master.key',
   'config/uri_service.yml'
 )
