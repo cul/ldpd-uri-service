@@ -201,6 +201,47 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms', type: :request do
         ))
       end
     end
+
+    context 'when creating a external term that already exists' do
+      before do
+        FactoryBot.create(:external_term, vocabulary: vocabulary)
+        post_with_auth '/api/v1/vocabularies/mythical_creatures/terms', params: {
+          uri: 'http://id.worldcat.org/fast/1161301/',
+          authority: 'fast',
+          term_type: 'external'
+        }
+      end
+
+      it 'returns 409' do
+        expect(response.status).to be 409
+      end
+
+      it 'returns error in json' do
+        expect(response.body).to be_json_eql(%(
+          { "errors": [{ "title": "Term already exists." }] }
+        ))
+      end
+    end
+
+    context 'when creating a temporary term that already exists' do
+      before do
+        FactoryBot.create(:temp_term, vocabulary: vocabulary)
+        post_with_auth '/api/v1/vocabularies/mythical_creatures/terms', params: {
+          pref_label: 'Yeti',
+          term_type: 'temporary'
+        }
+      end
+
+      it 'returns 409' do
+        expect(response.status).to be 409
+      end
+
+      it 'returns error in json' do
+        expect(response.body).to be_json_eql(%(
+          { "errors": [{ "title": "Term already exists." }] }
+        ))
+      end
+    end
   end
 
   describe 'PATCH /api/v1/vocabularies/:string_key/terms/:uri' do

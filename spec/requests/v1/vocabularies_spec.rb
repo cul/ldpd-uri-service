@@ -108,6 +108,23 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
         ))
       end
     end
+
+    context 'when creating a vocabulary that already exisits' do
+      before do
+        FactoryBot.create(:vocabulary)
+        post_with_auth '/api/v1/vocabularies', params: { string_key: 'mythical_creatures', label: 'Mythical Creatures' }
+      end
+
+      it 'returns 409' do
+        expect(response.status).to be 409
+      end
+
+      it 'returns error in json body' do
+        expect(response.body).to be_json_eql(%(
+          { "errors": [{ "title": "Vocabulary already exists." }] }
+        ))
+      end
+    end
   end
 
   describe 'PATCH /api/v1/vocabularies/:string_key' do
