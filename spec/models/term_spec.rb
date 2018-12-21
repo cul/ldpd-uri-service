@@ -198,6 +198,14 @@ RSpec.describe Term, type: :model do
       term.update(alt_label: ['new_label'])
       expect(term_solr_doc).to include('alt_label' => ['new_label'])
     end
+
+    context 'of a temporary term' do
+      let(:term) { FactoryBot.create(:temp_term) }
+
+      it 'cannot change pref_label' do
+        expect(term.update(pref_label: 'Big Foot')).to be false
+      end
+    end
   end
 
   describe 'when destroying a term' do

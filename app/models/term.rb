@@ -19,7 +19,7 @@ class Term < ApplicationRecord
   validates :uri, uniqueness: { scope: :vocabulary }
   validates :uuid, format: { with: /\A\h{8}-\h{4}-4\h{3}-[89ab]\h{3}-\h{12}\z/ },
                    if: Proc.new { |t| t.uuid }
-  validate  :uuid_uri_and_term_type_unchanged, :validate_custom_fields
+  validate  :uuid_uri_and_term_type_unchanged, :pref_label_unchanged_for_temp_term, :validate_custom_fields
 
   store :custom_fields, coder: JSON
 
@@ -85,6 +85,13 @@ class Term < ApplicationRecord
       errors.add(:uuid, 'Change of uuid not allowed!') if uuid_changed?
       errors.add(:uri, 'Change of uri not allowed!') if uri_changed?
       errors.add(:term_type, 'Change of term_type not allowed!') if term_type_changed?
+    end
+
+    # Check that pref_label has not been changed if temporary term
+    def pref_label_unchanged_for_temp_term
+      return unless persisted? && term_type == TEMPORARY # skip if object is new or is deleted
+
+      errors.add(:pref_label, 'cannot be updated for temp terms') if pref_label_changed?
     end
 
     def update_solr # If this is unsuccessful the solr core will be out of sync
