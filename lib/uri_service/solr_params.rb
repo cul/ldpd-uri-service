@@ -7,7 +7,7 @@ module URIService
         q: nil,
         qt: 'search',
         fq: [],
-        rows: URIService::PER_PAGE_DEFAULT,
+        rows: URIService::DEFAULT_PER_PAGE,
         start: 0
       }
     end
