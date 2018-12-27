@@ -13,12 +13,11 @@ class Term < ApplicationRecord
   after_commit :update_solr # Is triggered after successful save/update/destroy.
 
   validates :vocabulary, :pref_label, :uri, :uri_hash, :uuid, :term_type, presence: true
-  validates :term_type, inclusion: { in: TERM_TYPES }
+  validates :term_type, inclusion: { in: TERM_TYPES, message: 'is not valid: %{value}' }
   validates :uri,  format: { with: /\A#{URI.regexp}\z/ },
                    if: Proc.new { |t| t.uri? && (t.term_type == LOCAL || t.term_type == EXTERNAL) }
-  validates :uri, uniqueness: { scope: :vocabulary }
-  validates :uuid, format: { with: /\A\h{8}-\h{4}-4\h{3}-[89ab]\h{3}-\h{12}\z/ },
-                   if: Proc.new { |t| t.uuid }
+  validates :uri, uniqueness: { scope: :vocabulary, message: 'has already been added to this vocabulary' }
+  validates :uuid, format: { with: /\A\h{8}-\h{4}-4\h{3}-[89ab]\h{3}-\h{12}\z/ }, allow_nil: true
   validate  :uuid_uri_and_term_type_unchanged, :pref_label_unchanged_for_temp_term, :validate_custom_fields
 
   store :custom_fields, coder: JSON
