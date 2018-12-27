@@ -12,11 +12,28 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
     it 'returns all vocabularies' do
       get_with_auth '/api/v1/vocabularies'
       expect(JSON.parse(response.body)).to match(
+        'page' => 1,
+        'per_page' => 20,
+        'total_records' => 2,
         'vocabularies' => [
           { 'string_key' => 'mythical_creatures', 'label' => 'Mythical Creatures', 'custom_fields' => {} },
           { 'string_key' => 'names', 'label' => 'Names', 'custom_fields' => {} }
         ]
       )
+    end
+
+    it 'paginates results' do
+      FactoryBot.create(:vocabulary, string_key: 'animals', label: 'Animals')
+      get_with_auth '/api/v1/vocabularies?per_page=2&page=1'
+      expect(response.body).to be_json_eql(%(
+        {
+          "page": 1, "per_page": 2, "total_records": 3,
+          "vocabularies": [
+            { "string_key": "animals", "label": "Animals", "custom_fields": {} },
+            { "string_key": "mythical_creatures", "label": "Mythical Creatures", "custom_fields": {} }
+          ]
+        }
+      ))
     end
   end
 
