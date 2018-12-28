@@ -111,6 +111,8 @@ module V1
       end
 
       def valid_search_params?
+        # TODO: 'term' key is added by rails even though the value is not set in
+        # the request. Something to look into in the future.
         valid_params = [
           'action', 'controller', 'format', 'vocabulary_string_key', 'q', 'uri',
           'authority', 'pref_label', 'alt_label', 'term_type', 'per_page', 'page', 'term'
