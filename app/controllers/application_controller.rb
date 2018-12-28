@@ -3,6 +3,11 @@ class ApplicationController < ActionController::API
 
   before_action :authenticate_token, :ensure_json_request
 
+  rescue_from StandardError do |e|
+    Rails.logger.error "#{e}\n\t#{e.backtrace.join("\n\t")}"
+    render json: URIService::JSON.errors('Unexpected Error'), status: 500
+  end
+
   private
     def vocabulary
       @vocabulary ||= Vocabulary.find_by(string_key: params['vocabulary_string_key'])
