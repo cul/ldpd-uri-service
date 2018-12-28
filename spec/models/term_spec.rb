@@ -14,19 +14,42 @@ RSpec.describe Term, type: :model do
       expect(term.uuid).not_to be blank?
     end
 
-    it 'return error when uri invalid' do
-      expect {
-        FactoryBot.create(:external_term, uri: 'ldfkja')
-      }.to raise_error ActiveRecord::RecordInvalid
+    context 'with an invalid URI' do
+      let(:term) { FactoryBot.build(:external_term, uri: 'ldfkja') }
+
+      it 'returns validation error' do
+        expect(term.save).to be false
+        expect(term.errors.full_messages).to include 'Uri is invalid'
+      end
     end
 
-    it 'returns error if uri is missing' do
-      expect { FactoryBot.create(:external_term, uri: '') }.to raise_error ActiveRecord::RecordInvalid
+    context 'with a missing uri' do
+      let(:term) { FactoryBot.build(:external_term, uri: '') }
+
+      it 'returns validation error' do
+        expect(term.save).to be false
+        expect(term.errors.full_messages).to include 'Uri can\'t be blank'
+      end
     end
 
-    it 'returns error if uri is already represented in vocabulary' do
-      term
-      expect { FactoryBot.create(:external_term) }.to raise_error ActiveRecord::RecordInvalid
+    context 'when uri is already represented in vocabulary' do
+      let(:term_0) { FactoryBot.create(:external_term) }
+      let(:term)   { FactoryBot.build(:external_term, vocabulary: term_0.vocabulary) }
+
+      it 'returns validation error' do
+        expect(term.save).to be false
+        expect(term.errors.full_messages).to include 'Uri hash unique check failed. This uri already exists in this vocabulary.'
+      end
+    end
+
+    context 'when uri is already represented in a different vocabulary' do
+      let(:term_0) { FactoryBot.create(:external_term) }
+      let(:new_vocabulary) { FactoryBot.create(:vocabulary, string_key: 'fantastic_beasts') }
+      let(:term) { FactoryBot.build(:external_term, custom_fields: {}, vocabulary: new_vocabulary) }
+
+      it 'saves successfully' do
+        expect(term.save).to be true
+      end
     end
 
     it 'creates solr document' do
@@ -89,9 +112,14 @@ RSpec.describe Term, type: :model do
       expect(term.uuid).not_to be blank?
     end
 
-    it 'fails if there is a temporary term for the label given' do
-      term
-      expect { FactoryBot.create(:temp_term) }.to raise_error ActiveRecord::RecordInvalid
+    context 'when there is a temporary term for the label given' do
+      let(:term_0) { FactoryBot.create(:temp_term) }
+      let(:term) { FactoryBot.build(:temp_term, vocabulary: term_0.vocabulary) }
+
+      it 'returns validation errors' do
+        expect(term.save).to be false
+        expect(term.errors.full_messages).to include 'Uri hash unique check failed. This uri already exists in this vocabulary.'
+      end
     end
 
     it 'creates solr document' do
@@ -105,34 +133,49 @@ RSpec.describe Term, type: :model do
   end
 
   describe 'when creating a term' do
-    it 'fails if pref_label missing' do
-      expect {
-        FactoryBot.create(:external_term, pref_label: nil)
-      }.to raise_error ActiveRecord::RecordInvalid
+    context 'with missing pref_label' do
+      let(:term) { FactoryBot.build(:external_term, pref_label: nil) }
+
+      it 'returns validation error' do
+        expect(term.save).to be false
+        expect(term.errors.full_messages).to include 'Pref label can\'t be blank'
+      end
     end
 
-    it 'fails if term_type missing' do
-      expect {
-        FactoryBot.create(:external_term, term_type: nil)
-      }.to raise_error ActiveRecord::RecordInvalid
+    context 'with missing term_type' do
+      let(:term) { FactoryBot.build(:external_term, term_type: nil) }
+
+      it 'returns validation error' do
+        expect(term.save).to be false
+        expect(term.errors.full_messages).to include('Term type can\'t be blank')
+      end
     end
 
-    it 'fails if term_type is invalid' do
-      expect {
-        FactoryBot.create(:external_term, term_type: 'not_valid')
-      }.to raise_error ActiveRecord::RecordInvalid
+    context 'wtih invalid term_type' do
+      let(:term) { FactoryBot.build(:external_term, term_type: 'not_valid') }
+
+      it 'returns validation error' do
+        expect(term.save).to be false
+        expect(term.errors.full_messages).to include('Term type is not valid: not_valid')
+      end
     end
 
-    it 'fails if custom_field is invalid' do
-      expect {
-        FactoryBot.create(:external_term, custom_fields: { 'fake_custom_field' => 'blahblahblah' })
-      }.to raise_error ActiveRecord::RecordInvalid
+    context 'with invalid custom_field' do
+      let(:term) { FactoryBot.build(:external_term, custom_fields: { 'fake_custom_field' => 'blahblahblah' }) }
+
+      it 'returns validation error' do
+        expect(term.save).to be false
+        expect(term.errors.full_messages).to include 'Custom field fake_custom_field is not a valid custom field.'
+      end
     end
 
-    it 'fails if uuid is invalid' do
-      expect {
-        FactoryBot.create(:external_term, uuid: 'not-valid-at-all')
-      }.to raise_error ActiveRecord::RecordInvalid
+    context 'with invalid uuid' do
+      let(:term) { FactoryBot.build(:external_term, uuid: 'not-valid-at-all') }
+
+      it 'returns validation error' do
+        expect(term.save).to be false
+        expect(term.errors.full_messages).to include 'Uuid is invalid'
+      end
     end
   end
 
@@ -154,6 +197,14 @@ RSpec.describe Term, type: :model do
     it 'updates solr document' do
       term.update(alt_label: ['new_label'])
       expect(term_solr_doc).to include('alt_label' => ['new_label'])
+    end
+
+    context 'of a temporary term' do
+      let(:term) { FactoryBot.create(:temp_term) }
+
+      it 'cannot change pref_label' do
+        expect(term.update(pref_label: 'Big Foot')).to be false
+      end
     end
   end
 

@@ -52,7 +52,8 @@ module V1
       if term.save
         render json: URIService::JSON.term(term), status: 201
       else
-        render json: URIService::JSON.errors(term.errors.full_messages), status: 400
+        render json: URIService::JSON.errors(term.errors.full_messages),
+               status: term.errors.added?(:uri_hash, :taken) ? 409 : 400
       end
     end
 

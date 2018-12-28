@@ -1,5 +1,17 @@
 module URIService
   module JSON
+    # Converts array of vocabularies to expected json output.
+    def self.vocabularies(array)
+      {
+        vocabularies: array.map { |v| vocabulary(v) }
+      }
+    end
+
+    # Converts Vocabulary object to expected json output
+    def self.vocabulary(obj)
+      obj.as_json(only: [:string_key, :label, :custom_fields])
+    end
+
     # Converts hash or Term record into output hash used by the api
     #
     # @param [Hash|Term] obj to convert to hash for output
