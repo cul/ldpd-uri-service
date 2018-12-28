@@ -1,7 +1,5 @@
 module URIService
   class SolrParams
-    DEFAULT_ROWS = 25
-
     attr_reader :parameters
 
     def initialize
@@ -9,7 +7,7 @@ module URIService
         q: nil,
         qt: 'search',
         fq: [],
-        rows: DEFAULT_ROWS,
+        rows: URIService::DEFAULT_PER_PAGE,
         start: 0
       }
     end
@@ -33,6 +31,12 @@ module URIService
       define_method term_attribute do |value|
         fq(term_attribute.to_s, value)
       end
+    end
+
+    def pagination(per_page, page)
+      @parameters[:start] = (page.to_i - 1) * per_page.to_i
+      @parameters[:rows]  = per_page.to_i
+      self
     end
 
     def to_h

@@ -2,8 +2,14 @@ module V1
   class VocabulariesController < ApplicationController
     # GET /vocabularies
     def index
-      vocabularies = Vocabulary.all
-      render json: { vocabularies: vocabularies.map(&:to_api) }.to_json
+      # Kaminari takes care of converting page and per_page parameters to defaults if they are invalid.
+      vocabs = Vocabulary.order(:label).page(params[:page]).per(params[:per_page])
+      render json: {
+        page:          vocabs.current_page,
+        per_page:      vocabs.current_per_page,
+        total_records: vocabs.total_count,
+        vocabularies:  vocabs.map(&:to_api)
+      }.to_json
     end
 
     # GET /vocabularies/:string_key

@@ -62,7 +62,7 @@ RSpec.describe 'Filtering terms', type: :request do
     include_context 'json contains temporary term'
     include_context 'json contains local term'
     include_context 'json contains external term'
-    include_context 'json includes pagination', 1, 25, 3
+    include_context 'json includes pagination', 1, 20, 3
 
     before do
       get_with_auth '/api/v1/vocabularies/mythical_creatures/terms'
@@ -75,7 +75,7 @@ RSpec.describe 'Filtering terms', type: :request do
 
   context 'by query' do
     include_context 'json contains local term'
-    include_context 'json includes pagination', 1, 25, 1
+    include_context 'json includes pagination', 1, 20, 1
 
     before do
       get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?q=dragon'
@@ -84,7 +84,7 @@ RSpec.describe 'Filtering terms', type: :request do
 
   context 'by exact authority string' do
     include_context 'json contains external term'
-    include_context 'json includes pagination', 1, 25, 1
+    include_context 'json includes pagination', 1, 20, 1
 
     before do
       get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?authority=fast'
@@ -93,7 +93,7 @@ RSpec.describe 'Filtering terms', type: :request do
 
   context 'by exact uri string' do
     include_context 'json contains external term'
-    include_context 'json includes pagination', 1, 25, 1
+    include_context 'json includes pagination', 1, 20, 1
 
     before do
       get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?uri=http%3A%2F%2Fid.worldcat.org%2Ffast%2F1161301%2F'
@@ -102,7 +102,7 @@ RSpec.describe 'Filtering terms', type: :request do
 
   context 'by exact pref_label' do
     include_context 'json contains temporary term'
-    include_context 'json includes pagination', 1, 25, 1
+    include_context 'json includes pagination', 1, 20, 1
 
     before do
       get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?pref_label=Yeti'
@@ -111,7 +111,7 @@ RSpec.describe 'Filtering terms', type: :request do
 
   context 'by exact alt_label' do
     include_context 'json contains external term'
-    include_context 'json includes pagination', 1, 25, 1
+    include_context 'json includes pagination', 1, 20, 1
 
     before do
       get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?alt_label=Uni'
@@ -120,7 +120,7 @@ RSpec.describe 'Filtering terms', type: :request do
 
   context `by exact term_type` do
     include_context 'json contains temporary term'
-    include_context 'json includes pagination', 1, 25, 1
+    include_context 'json includes pagination', 1, 20, 1
 
     before do
       get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?term_type=temporary'
@@ -130,7 +130,7 @@ RSpec.describe 'Filtering terms', type: :request do
   context 'by custom field' do
     include_context 'json contains external term'
     include_context 'json contains local term'
-    include_context 'json includes pagination', 1, 25, 2
+    include_context 'json includes pagination', 1, 20, 2
 
     before do
       get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?harry_potter_reference=true'
@@ -144,7 +144,7 @@ RSpec.describe 'Filtering terms', type: :request do
 
     it 'returns no results' do
       expect(response.body).to be_json_eql(
-        '{ "page":1, "per_page":25, "total_records":0, "terms":[] }'
+        '{ "page":1, "per_page":20, "total_records":0, "terms":[] }'
       )
     end
   end

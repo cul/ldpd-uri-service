@@ -13,6 +13,7 @@ module V1
           solr_params.pref_label params[:pref_label]
           solr_params.alt_label  params[:alt_label]
           solr_params.term_type  params[:term_type]
+          solr_params.pagination per_page, page
 
           custom_fields.each do |k, v|
             if params[k]
@@ -23,7 +24,7 @@ module V1
 
         response = URIService::JSON.term_search(solr_response)
       else
-        response = { page: 1, per_page: 25, total_records: 0, terms: [] }
+        response = { page: page, per_page: per_page, total_records: 0, terms: [] }
       end
 
       render json: response, status: 200
@@ -96,11 +97,27 @@ module V1
 
     private
 
+      def page
+        page = (params[:page].blank?) ? 1 : params[:page].to_i
+        page = 1 if page < 1
+        page
+      end
+
+      def per_page
+        per_page = (params[:per_page].blank?) ? URIService::DEFAULT_PER_PAGE : params[:per_page].to_i
+        per_page = URIService::DEFAULT_PER_PAGE if per_page < 1
+        per_page = URIService::MAX_PER_PAGE     if per_page > URIService::MAX_PER_PAGE
+        per_page
+      end
+
       def valid_search_params?
+        # TODO: 'term' key is added by rails even though the value is not set in
+        # the request. Something to look into in the future.
         valid_params = [
           'action', 'controller', 'format', 'vocabulary_string_key', 'q', 'uri',
-          'authority', 'pref_label', 'alt_label', 'term_type'
+          'authority', 'pref_label', 'alt_label', 'term_type', 'per_page', 'page', 'term'
         ].concat(custom_fields.keys)
+        Rails.logger.debug params.keys
         params.keys.all? { |i| valid_params.include?(i) }
       end
 
