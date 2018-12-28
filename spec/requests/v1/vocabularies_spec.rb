@@ -35,6 +35,13 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
         }
       ))
     end
+
+    it 'sets per_page to max_per_page value when value exceeds max_per_page' do
+      get_with_auth '/api/v1/vocabularies?page=1&per_page=501'
+      expect(response.body).to be_json_eql(%(
+        { "page": 1, "per_page": 500, "total_records": 2 }
+      )).excluding('vocabularies')
+    end
   end
 
   describe 'GET /api/v1/vocabularies/:string_key' do

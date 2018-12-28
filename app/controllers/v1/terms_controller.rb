@@ -105,7 +105,8 @@ module V1
 
       def per_page
         per_page = (params[:per_page].blank?) ? URIService::DEFAULT_PER_PAGE : params[:per_page].to_i
-        per_page = URIService::DEFAULT_PER_PAGE if per_page < 1 || per_page > URIService::MAX_PER_PAGE
+        per_page = URIService::DEFAULT_PER_PAGE if per_page < 1
+        per_page = URIService::MAX_PER_PAGE     if per_page > URIService::MAX_PER_PAGE
         per_page
       end
 

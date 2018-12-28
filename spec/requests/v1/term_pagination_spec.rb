@@ -24,10 +24,10 @@ RSpec.describe 'Term Pagination', type: :request do
     )).excluding('terms')
   end
 
-  it 'sets per_page to default when greater than 1000' do
-    get_with_auth "/api/v1/vocabularies/#{vocab.string_key}/terms?per_page=1001"
+  it 'sets per_page to max_per_page when greater than max_per_page' do
+    get_with_auth "/api/v1/vocabularies/#{vocab.string_key}/terms?per_page=501"
     expect(response.body).to be_json_eql(%(
-      { "page":1, "per_page":20, "total_records":10 }
+      { "page":1, "per_page":500, "total_records":10 }
     )).excluding('terms')
   end
 
