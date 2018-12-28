@@ -206,6 +206,7 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms', type: :request do
       before do
         FactoryBot.create(:external_term, vocabulary: vocabulary)
         post_with_auth '/api/v1/vocabularies/mythical_creatures/terms', params: {
+          pref_label: 'Unicorn',
           uri: 'http://id.worldcat.org/fast/1161301/',
           authority: 'fast',
           term_type: 'external'
@@ -218,7 +219,7 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms', type: :request do
 
       it 'returns error in json' do
         expect(response.body).to be_json_eql(%(
-          { "errors": [{ "title": "Term already exists." }] }
+          { "errors": [{ "title": "Uri hash unique check failed. This uri already exists in this vocabulary." }] }
         ))
       end
     end
@@ -238,7 +239,7 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms', type: :request do
 
       it 'returns error in json' do
         expect(response.body).to be_json_eql(%(
-          { "errors": [{ "title": "Term already exists." }] }
+          { "errors": [{ "title": "Uri hash unique check failed. This uri already exists in this vocabulary." }] }
         ))
       end
     end

@@ -41,22 +41,19 @@ module V1
 
     # POST /vocabularies/:string_key/terms
     def create
-      if term_found?
-        render json: URIService::JSON.errors('Term already exists.'), status: 409
+      term = Term.new(create_params)
+      term.vocabulary = vocabulary
+
+      custom_fields.each do |f, v|
+        next unless params.key?(f)
+        term.set_custom_field(f, params[f])
+      end
+
+      if term.save
+        render json: URIService::JSON.term(term), status: 201
       else
-        term = Term.new(create_params)
-        term.vocabulary = vocabulary
-
-        custom_fields.each do |f, v|
-          next unless params.key?(f)
-          term.set_custom_field(f, params[f])
-        end
-
-        if term.save
-          render json: URIService::JSON.term(term), status: 201
-        else
-          render json: URIService::JSON.errors(term.errors.full_messages), status: 400
-        end
+        render json: URIService::JSON.errors(term.errors.full_messages),
+               status: term.errors.added?(:uri_hash, :taken) ? 409 : 400
       end
     end
 
@@ -100,15 +97,6 @@ module V1
     end
 
     private
-      def term_found?
-        if params[:term_type] == Term::TEMPORARY
-          Term.find_by(vocabulary: vocabulary, pref_label: params[:pref_label], term_type: Term::TEMPORARY)
-        elsif params[:term_type] == Term::EXTERNAL
-          Term.find_by(vocabulary: vocabulary, uri: params[:uri], term_type: Term::EXTERNAL)
-        else
-          nil
-        end
-      end
 
       def page
         page = (params[:page].blank?) ? 1 : params[:page].to_i

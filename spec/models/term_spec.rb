@@ -38,7 +38,7 @@ RSpec.describe Term, type: :model do
 
       it 'returns validation error' do
         expect(term.save).to be false
-        expect(term.errors.full_messages).to include 'Uri has already been added to this vocabulary'
+        expect(term.errors.full_messages).to include 'Uri hash unique check failed. This uri already exists in this vocabulary.'
       end
     end
 
@@ -118,7 +118,7 @@ RSpec.describe Term, type: :model do
 
       it 'returns validation errors' do
         expect(term.save).to be false
-        expect(term.errors.full_messages).to include 'Uri has already been added to this vocabulary'
+        expect(term.errors.full_messages).to include 'Uri hash unique check failed. This uri already exists in this vocabulary.'
       end
     end
 
@@ -147,7 +147,7 @@ RSpec.describe Term, type: :model do
 
       it 'returns validation error' do
         expect(term.save).to be false
-        expect(term.errors.full_messages).to include('Term type can\'t be blank', 'Term type is not valid: ')
+        expect(term.errors.full_messages).to include('Term type can\'t be blank')
       end
     end
 

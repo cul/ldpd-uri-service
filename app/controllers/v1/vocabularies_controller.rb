@@ -19,15 +19,13 @@ module V1
 
     # POST /vocabularies
     def create
-      if Vocabulary.find_by(string_key: create_params[:string_key])
-        render json: URIService::JSON.errors('Vocabulary already exists.'), status: 409
+      vocabulary = Vocabulary.new(create_params)
+
+      if vocabulary.save
+        render json: URIService::JSON.vocabulary(vocabulary), status: 201
       else
-        vocabulary = Vocabulary.new(create_params)
-        if vocabulary.save
-          render json: URIService::JSON.vocabulary(vocabulary), status: 201
-        else
-          render json: URIService::JSON.errors(vocabulary.errors.full_messages), status: 400
-        end
+        render json: URIService::JSON.errors(vocabulary.errors.full_messages),
+               status: (vocabulary.errors.added?(:string_key, :taken)) ? 409 : 400
       end
     end
 

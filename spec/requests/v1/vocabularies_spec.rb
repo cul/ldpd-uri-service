@@ -121,7 +121,7 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
 
       it 'returns error in json body' do
         expect(response.body).to be_json_eql(%(
-          { "errors": [{ "title": "Vocabulary already exists." }] }
+          { "errors": [{ "title": "String key has already been taken" }] }
         ))
       end
     end

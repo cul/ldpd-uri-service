@@ -13,10 +13,10 @@ class Term < ApplicationRecord
   after_commit :update_solr # Is triggered after successful save/update/destroy.
 
   validates :vocabulary, :pref_label, :uri, :uri_hash, :uuid, :term_type, presence: true
-  validates :term_type, inclusion: { in: TERM_TYPES, message: 'is not valid: %{value}' }
+  validates :term_type, inclusion: { in: TERM_TYPES, message: 'is not valid: %{value}' }, allow_nil: true
   validates :uri,  format: { with: /\A#{URI.regexp}\z/ },
                    if: Proc.new { |t| t.uri? && (t.term_type == LOCAL || t.term_type == EXTERNAL) }
-  validates :uri, uniqueness: { scope: :vocabulary, message: 'has already been added to this vocabulary' }
+  validates :uri_hash, uniqueness: { scope: :vocabulary, message: 'unique check failed. This uri already exists in this vocabulary.' }
   validates :uuid, format: { with: /\A\h{8}-\h{4}-4\h{3}-[89ab]\h{3}-\h{12}\z/ }, allow_nil: true
   validate  :uuid_uri_and_term_type_unchanged, :pref_label_unchanged_for_temp_term, :validate_custom_fields
 
@@ -43,6 +43,10 @@ class Term < ApplicationRecord
 
   def set_custom_field(field, value)
     self.custom_fields[field] = value
+  end
+
+  def already_exists?
+    errors.added?(:uri, :uniquness) || errors.added?(:uri_hash, :uniqueness)
   end
 
   private
