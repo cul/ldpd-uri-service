@@ -25,7 +25,7 @@ module V1
         key :description, 'Returns paginated vocabularies'
 
         parameter name: :per_page, in: :query, type: :number,
-                  minimum: 1, maximum: 500,
+                  minimum: 1, maximum: URIService::MAX_PER_PAGE,
                   description: 'Number of results per page'
 
         parameter name: :page, in: :query, type: :number,
@@ -109,7 +109,7 @@ module V1
           key :description, "Search for terms within a #{v.string_key} vocabulary"
 
           parameter name: :per_page, in: :query, type: :number,
-                    default: 20, minimum: 1, maximum: 500,
+                    default: 20, minimum: 1, maximum: URIService::MAX_PER_PAGE,
                     description: 'Number of results per page'
 
           parameter name: :page, in: :query, type: :number,
@@ -117,9 +117,12 @@ module V1
                     description: 'Page of paginated results'
 
           parameter name: :q, in: :query, type: :string
-          parameter name: :uri, in: :query, type: :string
+          parameter name: :uri, in: :query, type: :string,
+                    required: true
+
           parameter name: :pref_label, in: :query, type: :string
-          parameter name: :alt_label, in: :query, type: :string
+          parameter name: :alt_label, in: :query, type: :array,
+                    items: { type: :string }
           parameter name: :authority, in: :query, type: :string
           parameter name: :term_type, in: :query, type: :string
 
