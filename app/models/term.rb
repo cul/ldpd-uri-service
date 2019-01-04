@@ -18,7 +18,7 @@ class Term < ApplicationRecord
                    if: Proc.new { |t| t.uri? && (t.term_type == LOCAL || t.term_type == EXTERNAL) }
   validates :uri_hash, uniqueness: { scope: :vocabulary, message: 'unique check failed. This uri already exists in this vocabulary.' }
   validates :uuid, format: { with: /\A\h{8}-\h{4}-4\h{3}-[89ab]\h{3}-\h{12}\z/ }, allow_nil: true
-  validates :alt_label, absence: true, if: Proc.new { |t| t.term_type == TEMPORARY }
+  validates :alt_label, absence: { message: 'is not allowed for temporary terms' }, if: Proc.new { |t| t.term_type == TEMPORARY }
   validate  :uuid_uri_and_term_type_unchanged, :pref_label_unchanged_for_temp_term, :validate_custom_fields
 
   store :custom_fields, coder: JSON

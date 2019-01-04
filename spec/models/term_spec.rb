@@ -117,7 +117,7 @@ RSpec.describe Term, type: :model do
 
       it 'returns validation error' do
         expect(term.save).to be false
-        expect(term.errors.full_messages).to include 'Alt label must be blank'
+        expect(term.errors.full_messages).to include 'Alt label is not allowed for temporary terms'
       end
     end
 
