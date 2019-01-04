@@ -112,6 +112,15 @@ RSpec.describe Term, type: :model do
       expect(term.uuid).not_to be blank?
     end
 
+    context 'when alt_label is set' do
+      let(:term) { FactoryBot.build(:temp_term, alt_label: ['Big Foot']) }
+
+      it 'returns validation error' do
+        expect(term.save).to be false
+        expect(term.errors.full_messages).to include 'Alt label is not allowed for temporary terms'
+      end
+    end
+
     context 'when there is a temporary term for the label given' do
       let(:term_0) { FactoryBot.create(:temp_term) }
       let(:term) { FactoryBot.build(:temp_term, vocabulary: term_0.vocabulary) }
@@ -126,7 +135,6 @@ RSpec.describe Term, type: :model do
       expect(term_solr_doc).to include(
         'pref_label' => 'Yeti',
         'term_type' => 'temporary',
-        'alt_label' => ['Big Foot'],
         'custom_fields' => '{"harry_potter_reference":false}'
       )
     end
