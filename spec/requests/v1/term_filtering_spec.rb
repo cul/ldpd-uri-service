@@ -32,7 +32,7 @@ RSpec.describe 'Filtering terms', type: :request do
     it 'contains temp term' do
       expect(response.body).to include_json(
         {
-          'alt_label' => ['Big Foot'],
+          'alt_label' => [],
           'authority' => nil,
           'harry_potter_reference' => false,
           'pref_label' => 'Yeti',

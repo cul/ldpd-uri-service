@@ -27,7 +27,6 @@ FactoryBot.define do
 
     factory :temp_term do
       pref_label { 'Yeti' }
-      alt_label { ['Big Foot'] }
       term_type { 'temporary' }
       custom_fields {
         { harry_potter_reference: false }
