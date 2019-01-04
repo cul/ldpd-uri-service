@@ -5,14 +5,19 @@ module V1
     swagger_root do
       key :swagger, '2.0'
 
-      # info do
-      #
-      # end
+      info version: '1.0.0' do
+        key :title, 'URI Service API'
+        key :description, 'API to manage vocabularies and their associated terms.'
+      end
 
-      # key :host, 'petstore.swagger.wordnik.com'
       key :basePath, '/api/v1'
       key :consumes, ['application/json']
       key :produces, ['application/json']
+
+      security_definition :api_key, type: :apiKey do
+        key :name, :api_key
+        key :in, :header
+      end
     end
 
     swagger_path '/vocabularies' do
