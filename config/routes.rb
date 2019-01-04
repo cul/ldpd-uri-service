@@ -10,6 +10,8 @@ Rails.application.routes.draw do
 
         resources :custom_fields, param: :field_key, only: [:create, :update, :destroy]
       end
+
+      resources :open_api_specification, only: :index
     end
   end
 end
