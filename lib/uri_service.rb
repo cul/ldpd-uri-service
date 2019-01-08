@@ -31,7 +31,7 @@ module URIService
     end
   end
 
-  def self.auto_commit?
-    URI_SERVICE_CONFIG.fetch('auto_commit', true)
+  def self.commit_after_save?
+    URI_SERVICE_CONFIG.fetch('commit_after_save', false)
   end
 end

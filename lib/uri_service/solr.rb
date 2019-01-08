@@ -53,7 +53,7 @@ module URIService
     # @param Hash json document to be added to solr
     def add(doc)
       connection.add(doc)
-      connection.commit unless URIService.auto_commit?
+      connection.commit if URIService.commit_after_save?
     end
 
     # Deleting term based on uuid (solr primary key)
@@ -61,7 +61,7 @@ module URIService
     # @param String uuid
     def delete(uuid)
       connection.delete_by_query('uuid:' + solr_escape(uuid))
-      connection.commit unless URIService.auto_commit?
+      connection.commit if URIService.commit_after_save?
     end
 
     # Wrapper around escape method for different versions of RSolr
