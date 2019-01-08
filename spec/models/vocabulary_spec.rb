@@ -97,7 +97,7 @@ RSpec.describe Vocabulary, type: :model do
         expect(vocabulary.save).to be false
         expect(vocabulary.errors.full_messages).to include(
           'Custom fields each custom_field must have a label and data_type defined',
-          'Custom fields data_type must be one of string, number or boolean'
+          'Custom fields data_type must be one of string, integer or boolean'
         )
       end
     end
@@ -111,7 +111,7 @@ RSpec.describe Vocabulary, type: :model do
 
       it 'returns validation error' do
         expect(vocabulary.save).to be false
-        expect(vocabulary.errors.full_messages).to include 'Custom fields data_type must be one of string, number or boolean'
+        expect(vocabulary.errors.full_messages).to include 'Custom fields data_type must be one of string, integer or boolean'
       end
     end
   end

@@ -4,7 +4,7 @@ class Vocabulary < ApplicationRecord
     pref_label alt_label uri uri_hash vocabulary vocabulary_id,
     authority term_type custom_fields uuid created_at updated_at
   ).freeze
-  DATA_TYPES = %w(string number boolean).freeze
+  DATA_TYPES = %w(string integer boolean).freeze
 
   has_many :terms, dependent: :destroy
 
@@ -66,7 +66,7 @@ class Vocabulary < ApplicationRecord
         end
 
         unless DATA_TYPES.include? info[:data_type]
-          errors.add(:custom_fields, 'data_type must be one of string, number or boolean')
+          errors.add(:custom_fields, 'data_type must be one of string, integer or boolean')
         end
       end
     end

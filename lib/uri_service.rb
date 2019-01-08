@@ -3,7 +3,7 @@ module URIService
 
   SOLR_SUFFIX = {
     'string'  => '_si',
-    'number'  => '_ii',
+    'integer' => '_ii',
     'boolean' => '_bi'
   }.freeze
 

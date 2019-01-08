@@ -79,7 +79,7 @@ module V1
                   required: true
 
         parameter name: :data_type, in: :query, type: :string,
-                  required: true, enum: ['string', 'number', 'boolean']
+                  required: true, enum: Vocabulary::DATA_TYPES
       end
     end
 
