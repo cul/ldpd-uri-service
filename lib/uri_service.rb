@@ -30,4 +30,8 @@ module URIService
       raise 'Missing local_uri_host in config/uri_service.yml'
     end
   end
+
+  def self.commit_after_save?
+    URI_SERVICE_CONFIG.fetch('commit_after_save', false)
+  end
 end

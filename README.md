@@ -25,6 +25,18 @@ TODO
 ## Installation
 TODO
 
+## Configuration
+Various configurations can be changed in `config/uri_service.yml`.
+
+### API Keys
+TODO
+
+### Local URI HOST
+TODO
+
+### Commit After Save
+Our Solr configuration automatically soft commits all changes after a second and commits all changes after 30 seconds. This keeps things running smoothly in production environments because it prevents frequent, unnecessary commits to Solr. In test environments waiting a second for a document to appear is not ideal. Because of this there's a `commit_after_save` flag that can be set to `true` and this would commit each change immediately to Solr. This flag should only be set to `true` in development and test environments. The default value is `false`.
+
 ## Services (job queues, cache servers, search engines, etc.)
 URI Services stores local, temporary and external terms in a mysql database. Solr is used to index terms for fast lookup and searching. Redis/Resque will be used to run scheduled jobs.
 
