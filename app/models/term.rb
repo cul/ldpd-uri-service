@@ -53,12 +53,31 @@ class Term < ApplicationRecord
   private
 
     def validate_custom_fields
-      custom_fields.each do |k, _|
+      custom_fields.each do |k, v|
         # TODO: Validate data_type.
-        unless vocabulary.custom_fields.keys.include?(k)
+        return if v.nil?
+
+        if vocabulary.custom_fields.keys.include?(k)
+          case vocabulary.custom_fields[k][:data_type]
+          when 'string'
+            errors.add(:custom_field, "#{k} must be a string") unless v.is_a?(String)
+          when 'integer'
+            errors.add(:custom_field, "#{k} must be a (non-zero padded) integer") unless valid_integer?(v)
+          when 'boolean'
+            errors.add(:custom_field, "#{k} must be a boolean") unless valid_boolean?(v)
+          end
+        else
           errors.add(:custom_field, "#{k} is not a valid custom field.")
         end
       end
+    end
+
+    def valid_integer?(v)
+      v.is_a?(Integer) || (v.is_a?(String) && /\A[+-]?[1-9]\d*\z/.match(v))
+    end
+
+    def valid_boolean?(v)
+      (!!v == v) || (v.is_a?(String) && /\A(true|false)\z/.match(v))
     end
 
     def set_uuid

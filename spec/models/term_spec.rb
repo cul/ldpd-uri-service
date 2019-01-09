@@ -159,7 +159,7 @@ RSpec.describe Term, type: :model do
       end
     end
 
-    context 'wtih invalid term_type' do
+    context 'with invalid term_type' do
       let(:term) { FactoryBot.build(:external_term, term_type: 'not_valid') }
 
       it 'returns validation error' do
@@ -183,6 +183,50 @@ RSpec.describe Term, type: :model do
       it 'returns validation error' do
         expect(term.save).to be false
         expect(term.errors.full_messages).to include 'Uuid is invalid'
+      end
+    end
+
+    context 'with a boolean in a string custom_field' do
+      let(:vocab) do
+        FactoryBot.create(:vocabulary, custom_fields: { harry_potter_reference: { data_type: 'string', label: 'Harry Potter Reference' } })
+      end
+      let(:term) { FactoryBot.build(:external_term, vocabulary: vocab) }
+
+      it 'returns validation error' do
+        expect(term.save).to be false
+        expect(term.errors.full_messages).to include 'Custom field harry_potter_reference must be a string'
+      end
+    end
+
+    context 'with a string in an integer custom_field' do
+      let(:vocab) do
+        FactoryBot.create(:vocabulary, custom_fields: { harry_potter_reference: { data_type: 'integer', label: 'Harry Potter Reference' } })
+      end
+      let(:term) { FactoryBot.build(:external_term, vocabulary: vocab, custom_fields: { harry_potter_reference: 'yes' }) }
+
+      it 'returns validation error' do
+        expect(term.save).to be false
+        expect(term.errors.full_messages).to include 'Custom field harry_potter_reference must be a (non-zero padded) integer'
+      end
+    end
+
+    context 'with a integer in a boolean custom_field' do
+      let(:term) { FactoryBot.build(:external_term, custom_fields: { harry_potter_reference: 134 }) }
+
+      it 'returns validation error' do
+        expect(term.save).to be false
+        expect(term.errors.full_messages).to include 'Custom field harry_potter_reference must be a boolean'
+      end
+    end
+
+    context 'with a integer custom_field' do
+      let(:vocab) do
+        FactoryBot.create(:vocabulary, custom_fields: { harry_potter_reference: { data_type: 'integer', label: 'Harry Potter Reference' } })
+      end
+      let(:term) { FactoryBot.build(:external_term, vocabulary: vocab, custom_fields: { harry_potter_reference: 4 }) }
+
+      it 'saves successfully' do
+        expect(term.save).to be true
       end
     end
   end
