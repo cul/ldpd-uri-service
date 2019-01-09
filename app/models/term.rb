@@ -46,10 +46,6 @@ class Term < ApplicationRecord
     self.custom_fields[field] = value
   end
 
-  def already_exists?
-    errors.added?(:uri, :uniquness) || errors.added?(:uri_hash, :uniqueness)
-  end
-
   private
 
     def validate_custom_fields
