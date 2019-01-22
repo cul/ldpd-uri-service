@@ -210,6 +210,17 @@ RSpec.describe Term, type: :model do
       end
     end
 
+    context 'with a string (that\'s an integer) in an integer custom_field' do
+      let(:vocab) do
+        FactoryBot.create(:vocabulary, custom_fields: { harry_potter_reference: { data_type: 'integer', label: 'Harry Potter Reference' } })
+      end
+      let(:term) { FactoryBot.build(:external_term, vocabulary: vocab, custom_fields: { harry_potter_reference: '1234' }) }
+
+      it 'successfully saves' do
+        expect(term.save).to be true
+      end
+    end
+
     context 'with a integer in a boolean custom_field' do
       let(:term) { FactoryBot.build(:external_term, custom_fields: { harry_potter_reference: 134 }) }
 
