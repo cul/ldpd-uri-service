@@ -9,7 +9,7 @@ class Term < ApplicationRecord
   belongs_to :vocabulary
 
   before_validation :set_uuid, :set_uri, :set_uri_hash, on: :create
-
+  before_save :cast_custom_fields
   after_commit :update_solr # Is triggered after successful save/update/destroy.
 
   validates :vocabulary, :pref_label, :uri, :uri_hash, :uuid, :term_type, presence: true
@@ -47,11 +47,22 @@ class Term < ApplicationRecord
   end
 
   private
+    def cast_custom_fields
+      custom_fields.each do |k, v|
+        next unless v.is_a?(String) # Only converting string values.
+
+        case vocabulary.custom_fields[k][:data_type]
+        when 'integer'
+          custom_fields[k] = v.to_i
+        when 'boolean'
+          custom_fields[k] = (v == 'true') ? true : false if valid_boolean?(v)
+        end
+      end
+    end
 
     def validate_custom_fields
       custom_fields.each do |k, v|
-        # TODO: Validate data_type.
-        return if v.nil?
+        next if v.nil?
 
         if vocabulary.custom_fields.keys.include?(k)
           case vocabulary.custom_fields[k][:data_type]

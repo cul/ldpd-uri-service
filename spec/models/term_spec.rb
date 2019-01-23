@@ -219,6 +219,27 @@ RSpec.describe Term, type: :model do
       it 'successfully saves' do
         expect(term.save).to be true
       end
+
+      it 'correctly casts value to integer' do
+        term.save
+        expect(term.custom_fields[:harry_potter_reference]).to be_a Integer
+      end
+    end
+
+    context 'with a string (that\'s a boolean) in a boolean custom_field' do
+      let(:vocab) do
+        FactoryBot.create(:vocabulary, custom_fields: { harry_potter_reference: { data_type: 'boolean', label: 'Harry Potter Reference' } })
+      end
+      let(:term) { FactoryBot.build(:external_term, vocabulary: vocab, custom_fields: { harry_potter_reference: 'true' }) }
+
+      it 'successfully saves' do
+        expect(term.save).to be true
+      end
+
+      it 'correctly casts value to boolean' do
+        term.save
+        expect(term.custom_fields[:harry_potter_reference]).to be_a TrueClass
+      end
     end
 
     context 'with a integer in a boolean custom_field' do
