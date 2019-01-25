@@ -49,13 +49,23 @@ class Term < ApplicationRecord
   private
     def cast_custom_fields
       custom_fields.each do |k, v|
-        next unless v.is_a?(String) # Only converting string values.
+        next if v.nil?
 
         case vocabulary.custom_fields[k][:data_type]
+        when 'string'
+          raise "custom_field #{k} must be a string" unless v.is_a?(String)
         when 'integer'
-          custom_fields[k] = v.to_i
+          if valid_integer?(v)
+            custom_fields[k] = v.to_i if v.is_a?(String)
+          else
+            raise "custom_field #{f} must be an integer"
+          end
         when 'boolean'
-          custom_fields[k] = (v == 'true') ? true : false if valid_boolean?(v)
+          if valid_boolean?(v)
+            custom_fields[k] = (v == 'true') ? true : false if v.is_a?(String)
+          else
+            raise "custom_field #{f} must be a boolean"
+          end
         end
       end
     end
