@@ -50,6 +50,7 @@ class Term < ApplicationRecord
     def cast_custom_fields
       custom_fields.each do |k, v|
         next if v.nil?
+        raise "custom_field #{k} is not a valid custom field" unless vocabulary.custom_fields.keys.include?(k)
 
         case vocabulary.custom_fields[k][:data_type]
         when 'string'
@@ -58,13 +59,13 @@ class Term < ApplicationRecord
           if valid_integer?(v)
             custom_fields[k] = v.to_i if v.is_a?(String)
           else
-            raise "custom_field #{f} must be an integer"
+            raise "custom_field #{k} must be an integer"
           end
         when 'boolean'
           if valid_boolean?(v)
             custom_fields[k] = (v == 'true') ? true : false if v.is_a?(String)
           else
-            raise "custom_field #{f} must be a boolean"
+            raise "custom_field #{k} must be a boolean"
           end
         end
       end

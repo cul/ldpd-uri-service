@@ -196,6 +196,14 @@ RSpec.describe Term, type: :model do
         expect(term.save).to be false
         expect(term.errors.full_messages).to include 'Custom field harry_potter_reference must be a string'
       end
+
+      context 'when not validated' do
+        it 'raises error' do
+          expect {
+            term.save(validate: false)
+          }.to raise_error 'custom_field harry_potter_reference must be a string'
+        end
+      end
     end
 
     context 'with a string in an integer custom_field' do
@@ -207,6 +215,14 @@ RSpec.describe Term, type: :model do
       it 'returns validation error' do
         expect(term.save).to be false
         expect(term.errors.full_messages).to include 'Custom field harry_potter_reference must be a (non-zero padded) integer'
+      end
+
+      context 'when not validated' do
+        it 'raises error' do
+          expect {
+            term.save(validate: false)
+          }.to raise_error 'custom_field harry_potter_reference must be an integer'
+        end
       end
     end
 
@@ -248,6 +264,14 @@ RSpec.describe Term, type: :model do
       it 'returns validation error' do
         expect(term.save).to be false
         expect(term.errors.full_messages).to include 'Custom field harry_potter_reference must be a boolean'
+      end
+
+      context 'when not validated' do
+        it 'raises error' do
+          expect {
+            term.save(validate: false)
+          }.to raise_error 'custom_field harry_potter_reference must be a boolean'
+        end
       end
     end
 
