@@ -173,7 +173,7 @@ TODO
 
   _Required params:_ `field_key`, `label` and `data_type`
 
-  _Supported data_type:_ `string`, `number`, `boolean`
+  _Supported data_type:_ `string`, `integer`, `boolean`
 
 - **Success Response**
 
@@ -365,7 +365,7 @@ This endpoint will help define the terms returned and should help in the creatin
           "title" "Custom Field 1"
         },
         "custom_field_2": {
-          "type": "number",
+          "type": "integer",
           "title": "Custom Field 2"
         }
       }

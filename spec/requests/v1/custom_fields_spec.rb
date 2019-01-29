@@ -68,7 +68,7 @@ RSpec.describe 'Custom Fields Requests', type: :request do
           {
             "errors": [
               { "title": "Custom fields each custom_field must have a label and data_type defined" },
-              { "title": "Custom fields data_type must be one of string, number or boolean" }
+              { "title": "Custom fields data_type must be one of string, integer or boolean" }
             ]
           }
         ))

@@ -9,7 +9,7 @@ class Term < ApplicationRecord
   belongs_to :vocabulary
 
   before_validation :set_uuid, :set_uri, :set_uri_hash, on: :create
-
+  before_save :cast_custom_fields
   after_commit :update_solr # Is triggered after successful save/update/destroy.
 
   validates :vocabulary, :pref_label, :uri, :uri_hash, :uuid, :term_type, presence: true
@@ -46,19 +46,56 @@ class Term < ApplicationRecord
     self.custom_fields[field] = value
   end
 
-  def already_exists?
-    errors.added?(:uri, :uniquness) || errors.added?(:uri_hash, :uniqueness)
-  end
-
   private
+    def cast_custom_fields
+      custom_fields.each do |k, v|
+        next if v.nil?
+        raise "custom_field #{k} is not a valid custom field" unless vocabulary.custom_fields.keys.include?(k)
+
+        case vocabulary.custom_fields[k][:data_type]
+        when 'string'
+          raise "custom_field #{k} must be a string" unless v.is_a?(String)
+        when 'integer'
+          if valid_integer?(v)
+            custom_fields[k] = v.to_i if v.is_a?(String)
+          else
+            raise "custom_field #{k} must be an integer. Could not cast String \"#{v}\" to an integer"
+          end
+        when 'boolean'
+          if valid_boolean?(v)
+            custom_fields[k] = (v == 'true') ? true : false if v.is_a?(String)
+          else
+            raise "custom_field #{k} must be a boolean. Could not cast String \"#{v}\" to a boolean"
+          end
+        end
+      end
+    end
 
     def validate_custom_fields
-      custom_fields.each do |k, _|
-        # TODO: Validate data_type.
-        unless vocabulary.custom_fields.keys.include?(k)
+      custom_fields.each do |k, v|
+        next if v.nil?
+
+        if vocabulary.custom_fields.keys.include?(k)
+          case vocabulary.custom_fields[k][:data_type]
+          when 'string'
+            errors.add(:custom_field, "#{k} must be a string") unless v.is_a?(String)
+          when 'integer'
+            errors.add(:custom_field, "#{k} must be a (non-zero padded) integer") unless valid_integer?(v)
+          when 'boolean'
+            errors.add(:custom_field, "#{k} must be a boolean") unless valid_boolean?(v)
+          end
+        else
           errors.add(:custom_field, "#{k} is not a valid custom field.")
         end
       end
+    end
+
+    def valid_integer?(v)
+      v.is_a?(Integer) || (v.is_a?(String) && /\A[+-]?[1-9]\d*\z/.match(v))
+    end
+
+    def valid_boolean?(v)
+      (!!v == v) || (v.is_a?(String) && /\A(true|false)\z/.match(v))
     end
 
     def set_uuid
