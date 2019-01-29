@@ -59,13 +59,13 @@ class Term < ApplicationRecord
           if valid_integer?(v)
             custom_fields[k] = v.to_i if v.is_a?(String)
           else
-            raise "custom_field #{k} must be an integer"
+            raise "custom_field #{k} must be an integer. Could not cast String \"#{v}\" to an integer"
           end
         when 'boolean'
           if valid_boolean?(v)
             custom_fields[k] = (v == 'true') ? true : false if v.is_a?(String)
           else
-            raise "custom_field #{k} must be a boolean"
+            raise "custom_field #{k} must be a boolean. Could not cast String \"#{v}\" to a boolean"
           end
         end
       end

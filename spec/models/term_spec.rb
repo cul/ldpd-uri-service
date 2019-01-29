@@ -221,7 +221,7 @@ RSpec.describe Term, type: :model do
         it 'raises error' do
           expect {
             term.save(validate: false)
-          }.to raise_error 'custom_field harry_potter_reference must be an integer'
+          }.to raise_error 'custom_field harry_potter_reference must be an integer. Could not cast String "yes" to an integer'
         end
       end
     end
@@ -270,7 +270,7 @@ RSpec.describe Term, type: :model do
         it 'raises error' do
           expect {
             term.save(validate: false)
-          }.to raise_error 'custom_field harry_potter_reference must be a boolean'
+          }.to raise_error 'custom_field harry_potter_reference must be a boolean. Could not cast String "134" to a boolean'
         end
       end
     end
