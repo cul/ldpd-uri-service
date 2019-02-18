@@ -12,6 +12,10 @@ Rails.application.routes.draw do
       end
 
       resources :open_api_specification, only: :index
+
+      namespace :admin do
+        post :commit
+      end
     end
   end
 end
