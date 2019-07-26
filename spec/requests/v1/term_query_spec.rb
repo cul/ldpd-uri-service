@@ -13,7 +13,7 @@ RSpec.describe 'Querying terms', type: :request do
     term = FactoryBot.create(:external_term, vocabulary: vocabulary, pref_label: 'Me', alt_label: [])
     FactoryBot.create(:external_term, vocabulary: vocabulary, pref_label: 'Meadows', alt_label: [], uri: 'http://id.worldcat.org/fast/1013121')
 
-    expected_results = [URIService::JSON.term(term)].to_json
+    expected_results = [URIService::JSON.term(term, request: false)].to_json
 
     get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?q=me'
     expect(response.body).to be_json_eql(expected_results).at_path('terms')
@@ -23,7 +23,7 @@ RSpec.describe 'Querying terms', type: :request do
     term = FactoryBot.create(:local_term, vocabulary: vocabulary, pref_label: 'I', alt_label: [])
     FactoryBot.create(:local_term, vocabulary: vocabulary, pref_label: 'III', alt_label: [])
 
-    expected_search_results = [URIService::JSON.term(term)].to_json
+    expected_search_results = [URIService::JSON.term(term, request: false)].to_json
 
     get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?q=i'
     expect(response.body).to be_json_eql(expected_search_results).at_path('terms')
@@ -32,7 +32,7 @@ RSpec.describe 'Querying terms', type: :request do
   context 'when querying with partial and complete queries' do
     let(:term) { FactoryBot.create(:local_term, pref_label: 'What a great value') }
     let(:expected_results) do
-      [URIService::JSON.term(term)].to_json
+      [URIService::JSON.term(term, request: false)].to_json
     end
 
     before { term }
@@ -74,7 +74,7 @@ RSpec.describe 'Querying terms', type: :request do
     term3 = FactoryBot.create(:local_term, pref_label: 'Catastrophic', uri: 'http://id.loc.gov/fake/333', vocabulary: vocabulary)
 
     expected_results = [
-      URIService::JSON.term(term1), URIService::JSON.term(term2), URIService::JSON.term(term3)
+      URIService::JSON.term(term1, request: false), URIService::JSON.term(term2, request: false), URIService::JSON.term(term3, request: false)
     ].to_json
 
     get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?q=Cat'
@@ -87,7 +87,7 @@ RSpec.describe 'Querying terms', type: :request do
     term3 = FactoryBot.create(:local_term, pref_label: 'The Cat', uri: 'http://id.loc.gov/fake/333', vocabulary: vocabulary)
 
     expected_results = [
-      URIService::JSON.term(term3), URIService::JSON.term(term1), URIService::JSON.term(term2)
+      URIService::JSON.term(term3, request: false), URIService::JSON.term(term1, request: false), URIService::JSON.term(term2, request: false)
     ].to_json
 
     get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?q=Cat'
@@ -100,7 +100,7 @@ RSpec.describe 'Querying terms', type: :request do
     term3 = FactoryBot.create(:local_term, pref_label: 'Steve Lobs', uri: 'http://id.loc.gov/fake/333', vocabulary: vocabulary)
 
     expected_results = [
-      URIService::JSON.term(term1), URIService::JSON.term(term2), URIService::JSON.term(term3)
+      URIService::JSON.term(term1, request: false), URIService::JSON.term(term2, request: false), URIService::JSON.term(term3, request: false)
     ].to_json
 
     get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?q=Steve'
@@ -112,7 +112,7 @@ RSpec.describe 'Querying terms', type: :request do
     term2 = FactoryBot.create(:local_term, pref_label: 'Batmanners', uri: 'http://id.loc.gov/fake/222', vocabulary: vocabulary)
 
     expected_results = [
-      URIService::JSON.term(term2), URIService::JSON.term(term1)
+      URIService::JSON.term(term2, request: false), URIService::JSON.term(term1, request: false)
     ].to_json
 
     get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?q=man'
@@ -123,7 +123,7 @@ RSpec.describe 'Querying terms', type: :request do
     term1 = FactoryBot.create(:local_term, pref_label: 'Batmanners', uri: 'http://id.loc.gov/fake/222', vocabulary: vocabulary)
     term2 = FactoryBot.create(:local_term, pref_label: 'Supermanners', uri: 'http://id.loc.gov/fake/111', vocabulary: vocabulary)
 
-    expected_results = [URIService::JSON.term(term1)].to_json
+    expected_results = [URIService::JSON.term(term1, request: false)].to_json
 
     get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?q=bat'
     expect(response.body).to be_json_eql(expected_results).at_path('terms')
@@ -133,7 +133,7 @@ RSpec.describe 'Querying terms', type: :request do
   it 'performs a case insensitive search' do
     term = FactoryBot.create(:local_term, pref_label: 'Batmanners', uri: 'http://id.loc.gov/fake/222', vocabulary: vocabulary)
 
-    expected_results = [URIService::JSON.term(term) ].to_json
+    expected_results = [URIService::JSON.term(term, request: false)].to_json
 
     get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?q=bAtMaNnErS'
     expect(response.body).to be_json_eql(expected_results).at_path('terms')

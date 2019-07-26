@@ -3,28 +3,28 @@ module URIService
     # Converts array of vocabularies to expected json output.
     def self.vocabularies(array)
       {
-        vocabularies: array.map { |v| vocabulary(v) }
+        vocabularies: array.map { |v| vocabulary(v, request: false) }
       }
     end
 
     # Converts Vocabulary object to expected json output
-    def self.vocabulary(obj)
-      obj.as_json(only: [:string_key, :label, :custom_fields])
+    def self.vocabulary(obj, request: true)
+      output = obj.as_json(only: [:string_key, :label, :custom_fields])
+      request ? { vocabulary: output } : output
     end
 
     # Converts hash or Term record into output hash used by the api
     #
     # @param [Hash|Term] obj to convert to hash for output
     # @return [Hash]
-    def self.term(obj)
+    def self.term(obj, request: true)
+      output = nil
       if obj.is_a? Term
-        h = obj.as_json(only: [:uuid, :uri, :pref_label, :alt_label, :authority, :term_type])
+        output = obj.as_json(only: [:uuid, :uri, :pref_label, :alt_label, :authority, :term_type])
 
         if obj.vocabulary
-          obj.vocabulary.custom_fields.each { |f, _| h[f] = obj.custom_fields.fetch(f, nil) }
+          obj.vocabulary.custom_fields.each { |f, _| output[f] = obj.custom_fields.fetch(f, nil) }
         end
-
-        h
       elsif obj.is_a? Hash
         document = obj.symbolize_keys
 
@@ -44,9 +44,9 @@ module URIService
             output[f] = extra_fields.fetch(f, nil)
           end
         end
-
-        output
       end
+
+      request ? { term: output } : output
     end
 
     def self.term_search(solr_response)
@@ -57,12 +57,13 @@ module URIService
         page: current_page(start, per_page),
         per_page: per_page,
         total_records: solr_response['response']['numFound'],
-        terms: solr_response['response']['docs'].map { |d| term(d) }
+        terms: solr_response['response']['docs'].map { |d| term(d, request: false) }
       }
     end
 
-    def self.custom_field(vocabulary, field_key)
-      vocabulary.custom_fields[field_key].merge(field_key: field_key)
+    def self.custom_field(vocabulary, field_key, request: true)
+      output = vocabulary.custom_fields[field_key].merge(field_key: field_key)
+      request ? { custom_field: output } : output
     end
 
     # Generates JSON with errors

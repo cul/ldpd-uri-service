@@ -45,8 +45,8 @@ module V1
       term.vocabulary = vocabulary
 
       custom_fields.each do |f, v|
-        next unless params.key?(f)
-        term.set_custom_field(f, params[f])
+        next unless params[:term].key?(f)
+        term.set_custom_field(f, params[:term][f])
       end
 
       if term.save
@@ -67,8 +67,8 @@ module V1
         term.assign_attributes(update_params) # updates, but doesn't save.
 
         custom_fields.each do |f, v|
-          next unless params.key?(f)
-          term.set_custom_field(f, params[f])
+          next unless params[:term].key?(f)
+          term.set_custom_field(f, params[:term][f])
         end
 
         if term.save
@@ -127,11 +127,11 @@ module V1
       end
 
       def create_params
-        params.permit(:pref_label, :uri, :authority, :term_type, :uuid, alt_label: [])
+        params.require(:term).permit(:pref_label, :uri, :authority, :term_type, :uuid, alt_label: [])
       end
 
       def update_params
-        params.permit(:pref_label, :authority, alt_label: [])
+        params.require(:term).permit(:pref_label, :authority, alt_label: [])
       end
   end
 end
