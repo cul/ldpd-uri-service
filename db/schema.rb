@@ -10,12 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_14_155305) do
+ActiveRecord::Schema.define(version: 2019_07_26_151156) do
 
   create_table "terms", force: :cascade do |t|
     t.integer "vocabulary_id", null: false
     t.string "pref_label", null: false
-    t.text "alt_label"
+    t.text "alt_labels"
     t.string "uri", null: false
     t.string "uri_hash", null: false
     t.string "authority"

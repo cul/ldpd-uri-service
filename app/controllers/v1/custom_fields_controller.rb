@@ -3,13 +3,13 @@ module V1
     before_action :valid_vocabulary?, :field_key_present?
 
     def create
-      if vocabulary.custom_fields.key?(params[:field_key])
+      if vocabulary.custom_fields.key?(create_params[:field_key])
         render json: URIService::JSON.errors('Field key already exists'), status: 409
       else
         vocabulary.add_custom_field(create_params)
 
         if vocabulary.save
-          render json: URIService::JSON.custom_field(vocabulary, params[:field_key]), status: 201
+          render json: URIService::JSON.custom_field(vocabulary, create_params[:field_key]), status: 201
         else
           render json: URIService::JSON.errors(vocabulary.errors.full_messages), status: 400
         end
@@ -47,17 +47,17 @@ module V1
     private
 
       def field_key_present?
-        if params.fetch(:field_key, nil).blank?
+        if (action_name == 'create' ? params.dig(:custom_field, :field_key) : params.fetch(:field_key, nil)).blank?
           render json: URIService::JSON.errors('Field key must be present.'), status: 400
         end
       end
 
       def create_params
-        params.permit(:field_key, :label, :data_type)
+        params.require(:custom_field).permit(:field_key, :label, :data_type)
       end
 
       def update_params
-        params.permit(:field_key, :label)
+        params.require(:custom_field).permit(:label).to_h.merge(field_key: params[:field_key])
       end
   end
 end

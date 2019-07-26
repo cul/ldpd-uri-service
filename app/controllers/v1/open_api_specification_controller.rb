@@ -121,7 +121,7 @@ module V1
                     required: true
 
           parameter name: :pref_label, in: :query, type: :string
-          parameter name: :alt_label, in: :query, type: :array,
+          parameter name: :alt_labels, in: :query, type: :array,
                     items: { type: :string }
           parameter name: :authority, in: :query, type: :string
           parameter name: :term_type, in: :query, type: :string
@@ -138,7 +138,7 @@ module V1
           parameter name: :pref_label, in: :query, type: :string,
                     required: true
 
-          parameter name: :alt_label, in: :query, type: :array,
+          parameter name: :alt_labels, in: :query, type: :array,
                     'x-uri-service-only-for-term-type': ['external', 'local'],
                     items: { type: :string }
 
@@ -164,7 +164,7 @@ module V1
         operation :patch do
           parameter name: :uri, in: :path, type: :string, required: true
           parameter name: :pref_label, in: :query, type: :string
-          parameter name: :alt_label, in: :query, type: :array,
+          parameter name: :alt_labels, in: :query, type: :array,
                     'x-uri-service-only-for-term-type': ['external', 'local'],
                     items: { type: :string }
           parameter name: :authority, in: :query, type: :string

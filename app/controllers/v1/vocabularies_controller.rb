@@ -60,11 +60,11 @@ module V1
     private
 
       def create_params
-        params.permit(:string_key, :label)
+        params.require(:vocabulary).permit(:string_key, :label)
       end
 
       def update_params
-        params.permit(:label)
+        params.require(:vocabulary).permit(:label)
       end
   end
 end

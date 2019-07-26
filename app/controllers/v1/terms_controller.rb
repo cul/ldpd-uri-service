@@ -11,7 +11,7 @@ module V1
           solr_params.authority  params[:authority]
           solr_params.uri        params[:uri]
           solr_params.pref_label params[:pref_label]
-          solr_params.alt_label  params[:alt_label]
+          solr_params.alt_labels params[:alt_labels]
           solr_params.term_type  params[:term_type]
           solr_params.pagination per_page, page
 
@@ -45,8 +45,8 @@ module V1
       term.vocabulary = vocabulary
 
       custom_fields.each do |f, v|
-        next unless params.key?(f)
-        term.set_custom_field(f, params[f])
+        next unless params[:term].key?(f)
+        term.set_custom_field(f, params[:term][f])
       end
 
       if term.save
@@ -67,8 +67,8 @@ module V1
         term.assign_attributes(update_params) # updates, but doesn't save.
 
         custom_fields.each do |f, v|
-          next unless params.key?(f)
-          term.set_custom_field(f, params[f])
+          next unless params[:term].key?(f)
+          term.set_custom_field(f, params[:term][f])
         end
 
         if term.save
@@ -116,7 +116,7 @@ module V1
         # the request. Something to look into in the future.
         valid_params = [
           'action', 'controller', 'format', 'vocabulary_string_key', 'q', 'uri',
-          'authority', 'pref_label', 'alt_label', 'term_type', 'per_page', 'page', 'term'
+          'authority', 'pref_label', 'alt_labels', 'term_type', 'per_page', 'page', 'term'
         ].concat(custom_fields.keys)
         Rails.logger.debug params.keys
         params.keys.all? { |i| valid_params.include?(i) }
@@ -127,11 +127,11 @@ module V1
       end
 
       def create_params
-        params.permit(:pref_label, :uri, :authority, :term_type, :uuid, alt_label: [])
+        params.require(:term).permit(:pref_label, :uri, :authority, :term_type, :uuid, alt_labels: [])
       end
 
       def update_params
-        params.permit(:pref_label, :authority, alt_label: [])
+        params.require(:term).permit(:pref_label, :authority, alt_labels: [])
       end
   end
 end

@@ -27,7 +27,7 @@ module URIService
       self
     end
 
-    [:vocabulary, :authority, :uri, :pref_label, :alt_label, :term_type].each do |term_attribute|
+    [:vocabulary, :authority, :uri, :pref_label, :alt_labels, :term_type].each do |term_attribute|
       define_method term_attribute do |value|
         fq(term_attribute.to_s, value)
       end

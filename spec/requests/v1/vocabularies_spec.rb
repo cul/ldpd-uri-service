@@ -51,13 +51,21 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
 
     it 'returns one vocabulary' do
       get_with_auth '/api/v1/vocabularies/mythical_creatures'
-      expect(JSON.parse(response.body)).to match('string_key' => 'mythical_creatures', 'label' => 'Mythical Creatures', 'custom_fields' => {})
+      expect(response.body).to be_json_eql(%(
+        {
+          "vocabulary": {
+            "string_key": "mythical_creatures",
+            "label": "Mythical Creatures",
+            "custom_fields": {}
+          }
+        }
+      ))
       expect(response.status).to be 200
     end
 
     it 'returns 404 if vocabulary not found' do
       get_with_auth '/api/v1/vocabularies/not_created_yet'
-      expect(JSON.parse(response.body)).to match('errors' => [{ 'title' => 'Not Found' }])
+      expect(response.body).to be_json_eql(%({ "errors": [{ "title": "Not Found" }] }))
       expect(response.status).to be 404
     end
   end
@@ -67,7 +75,7 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
 
     context 'when successfully creating a new vocabulary' do
       before do
-        post_with_auth '/api/v1/vocabularies', params: { string_key: 'collections', label: 'Collections' }
+        post_with_auth '/api/v1/vocabularies', params: { vocabulary: { string_key: 'collections', label: 'Collections' } }
       end
 
       it 'creates a new vocabulary record' do
@@ -76,11 +84,15 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
       end
 
       it 'returns newly created vocabulary in json' do
-        expect(JSON.parse(response.body)).to match(
-          'string_key' => 'collections',
-          'label' => 'Collections',
-          'custom_fields' => {}
-        )
+        expect(response.body).to be_json_eql(%(
+          {
+            "vocabulary": {
+              "string_key": "collections",
+              "label": "Collections",
+              "custom_fields": {}
+            }
+          }
+        ))
       end
 
       it 'returns 201' do
@@ -90,7 +102,7 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
 
     context 'when string_key is missing' do
       before do
-        post_with_auth '/api/v1/vocabularies', params: { string_key: nil, label: 'Collections' }
+        post_with_auth '/api/v1/vocabularies', params: { vocabulary: { string_key: nil, label: 'Collections' } }
       end
 
       it 'returns 400' do
@@ -112,7 +124,7 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
     context 'when creating a vocabulary that already exisits' do
       before do
         FactoryBot.create(:vocabulary)
-        post_with_auth '/api/v1/vocabularies', params: { string_key: 'mythical_creatures', label: 'Mythical Creatures' }
+        post_with_auth '/api/v1/vocabularies', params: { vocabulary: { string_key: 'mythical_creatures', label: 'Mythical Creatures' } }
       end
 
       it 'returns 409' do
@@ -134,7 +146,7 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
 
     context 'when updating label' do
       before do
-        patch_with_auth '/api/v1/vocabularies/mythical_creatures', params: { label: 'FAST Mythical Creatures' }
+        patch_with_auth '/api/v1/vocabularies/mythical_creatures', params: { vocabulary: { label: 'FAST Mythical Creatures' } }
       end
 
       it 'updates label for vocabulary' do
@@ -142,7 +154,15 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
       end
 
       it 'returns new vocabulary' do
-        expect(JSON.parse(response.body)).to match('string_key' => 'mythical_creatures', 'label' => 'FAST Mythical Creatures', 'custom_fields' => {})
+        expect(response.body).to be_json_eql(%(
+          {
+            "vocabulary": {
+              "string_key": "mythical_creatures",
+              "label": "FAST Mythical Creatures",
+              "custom_fields": {}
+            }
+          }
+        ))
       end
 
       it 'returns 200' do
@@ -152,11 +172,19 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
 
     context 'when updating string key' do
       before do
-        patch_with_auth '/api/v1/vocabularies/mythical_creatures', params: { string_key: 'fast_mythical_creatures' }
+        patch_with_auth '/api/v1/vocabularies/mythical_creatures', params: { vocabulary: { string_key: 'fast_mythical_creatures' } }
       end
 
       it 'does not update record' do
-        expect(JSON.parse(response.body)).to match('string_key' => 'mythical_creatures', 'label' => 'Mythical Creatures', 'custom_fields' => {})
+        expect(response.body).to be_json_eql(%(
+          {
+            "vocabulary": {
+              "string_key": "mythical_creatures",
+              "label": "Mythical Creatures",
+              "custom_fields": {}
+            }
+          }
+        ))
       end
 
       # not sure if this is the correct reponse code.
@@ -167,7 +195,7 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
 
     context 'when invalid string key' do
       before do
-        patch_with_auth '/api/v1/vocabularies/names', params: { label: 'FAST Names' }
+        patch_with_auth '/api/v1/vocabularies/names', params: { vocabulary: { label: 'FAST Names' } }
       end
 
       it 'returns 404' do

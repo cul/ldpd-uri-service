@@ -5,7 +5,7 @@ RSpec.describe 'Term Pagination', type: :request do
 
   before do
     (1..10).each do
-      FactoryBot.create(:temp_term, vocabulary: vocab, pref_label: Faker::HarryPotter.unique.spell, custom_fields: {}, alt_label: [])
+      FactoryBot.create(:temp_term, vocabulary: vocab, pref_label: Faker::HarryPotter.unique.spell, custom_fields: {}, alt_labels: [])
     end
     Faker::HarryPotter.unique.clear
   end
