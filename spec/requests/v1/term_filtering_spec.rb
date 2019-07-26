@@ -5,7 +5,7 @@ RSpec.describe 'Filtering terms', type: :request do
     it 'contains external term' do
       expect(response.body).to include_json(
         {
-          'alt_label' => ['Uni'], 'authority' => 'fast',
+          'alt_labels' => ['Uni'], 'authority' => 'fast',
           'harry_potter_reference' => true,
           'pref_label' => 'Unicorns', 'term_type' => 'external',
           'uri' => 'http://id.worldcat.org/fast/1161301/',
@@ -18,7 +18,7 @@ RSpec.describe 'Filtering terms', type: :request do
     it 'contains local term' do
       expect(response.body).to include_json(
         {
-          'alt_label' => [],
+          'alt_labels' => [],
           'authority' => nil,
           'harry_potter_reference' => true,
           'pref_label' => 'Dragons',
@@ -32,7 +32,7 @@ RSpec.describe 'Filtering terms', type: :request do
     it 'contains temp term' do
       expect(response.body).to include_json(
         {
-          'alt_label' => [],
+          'alt_labels' => [],
           'authority' => nil,
           'harry_potter_reference' => false,
           'pref_label' => 'Yeti',
@@ -53,7 +53,7 @@ RSpec.describe 'Filtering terms', type: :request do
   end
 
   before do
-    unicorn = FactoryBot.create(:external_term, alt_label: ['Uni'])
+    unicorn = FactoryBot.create(:external_term, alt_labels: ['Uni'])
     FactoryBot.create(:local_term, vocabulary: unicorn.vocabulary)
     FactoryBot.create(:temp_term, vocabulary: unicorn.vocabulary)
   end
@@ -109,12 +109,12 @@ RSpec.describe 'Filtering terms', type: :request do
     end
   end
 
-  context 'by exact alt_label' do
+  context 'by exact alt_labels' do
     include_context 'json contains external term'
     include_context 'json includes pagination', 1, 20, 1
 
     before do
-      get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?alt_label=Uni'
+      get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?alt_labels=Uni'
     end
   end
 

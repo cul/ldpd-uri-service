@@ -10,8 +10,8 @@ RSpec.describe 'Querying terms', type: :request do
   end
 
   it 'for 2 character queries only returns results with exact matches' do
-    term = FactoryBot.create(:external_term, vocabulary: vocabulary, pref_label: 'Me', alt_label: [])
-    FactoryBot.create(:external_term, vocabulary: vocabulary, pref_label: 'Meadows', alt_label: [], uri: 'http://id.worldcat.org/fast/1013121')
+    term = FactoryBot.create(:external_term, vocabulary: vocabulary, pref_label: 'Me', alt_labels: [])
+    FactoryBot.create(:external_term, vocabulary: vocabulary, pref_label: 'Meadows', alt_labels: [], uri: 'http://id.worldcat.org/fast/1013121')
 
     expected_results = [URIService::JSON.term(term, request: false)].to_json
 
@@ -20,8 +20,8 @@ RSpec.describe 'Querying terms', type: :request do
   end
 
   it 'for 1 character queries only returns results with exact matches' do
-    term = FactoryBot.create(:local_term, vocabulary: vocabulary, pref_label: 'I', alt_label: [])
-    FactoryBot.create(:local_term, vocabulary: vocabulary, pref_label: 'III', alt_label: [])
+    term = FactoryBot.create(:local_term, vocabulary: vocabulary, pref_label: 'I', alt_labels: [])
+    FactoryBot.create(:local_term, vocabulary: vocabulary, pref_label: 'III', alt_labels: [])
 
     expected_search_results = [URIService::JSON.term(term, request: false)].to_json
 

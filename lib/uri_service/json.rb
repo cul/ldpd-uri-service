@@ -20,7 +20,7 @@ module URIService
     def self.term(obj, request: true)
       output = nil
       if obj.is_a? Term
-        output = obj.as_json(only: [:uuid, :uri, :pref_label, :alt_label, :authority, :term_type])
+        output = obj.as_json(only: [:uuid, :uri, :pref_label, :alt_labels, :authority, :term_type])
 
         if obj.vocabulary
           obj.vocabulary.custom_fields.each { |f, _| output[f] = obj.custom_fields.fetch(f, nil) }
@@ -32,7 +32,7 @@ module URIService
           uuid:       document.fetch(:uuid, nil),
           uri:        document.fetch(:uri, nil),
           pref_label: document.fetch(:pref_label, nil),
-          alt_label:  document.fetch(:alt_label, []),
+          alt_labels: document.fetch(:alt_labels, []),
           authority:  document.fetch(:authority, nil),
           term_type:  document.fetch(:term_type, nil)
         }

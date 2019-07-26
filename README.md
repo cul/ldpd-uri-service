@@ -231,7 +231,7 @@ TODO
     - `authority`: search by exact authority string
     - `uri`: search by exact uri string
     - `pref_label`: search by exact pref_label string
-    - `alt_label`: search by exact alt_label string
+    - `alt_labels`: search by exact alt_labels string
     - `term_type`: search by exact term_type
     - additionally you will be able to query by any custom field name defined in that vocabulary, for example, if a custom field name is `name_type`, doing the following search would search through the terms in that vocabulary for any terms that contain 'personal' in the name_type field. If a `name_type` field is not defined within that vocabulary you will get no results.
       `GET /vocabularies/:string_key/terms?name_type=personal`
@@ -355,7 +355,7 @@ This endpoint will help define the terms returned and should help in the creatin
           "type": "string"
           "title": "Issue title."
         },
-        "alt_label": {
+        "alt_labels": {
           "type": "array",
   	  "items": { "type": "string" },
   	  "title": "Alternate Label",

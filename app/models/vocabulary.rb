@@ -1,7 +1,7 @@
 class Vocabulary < ApplicationRecord
   ALPHANUMERIC_UNDERSCORE_KEY_REGEX = /\A[a-z]+[a-z0-9_]*\z/
   RESERVED_FIELD_NAMES = %w(
-    pref_label alt_label uri uri_hash vocabulary vocabulary_id,
+    pref_label alt_labels uri uri_hash vocabulary vocabulary_id,
     authority term_type custom_fields uuid created_at updated_at
   ).freeze
   DATA_TYPES = %w(string integer boolean).freeze

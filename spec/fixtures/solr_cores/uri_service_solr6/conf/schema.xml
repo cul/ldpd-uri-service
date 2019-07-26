@@ -12,7 +12,7 @@
   <field name="uuid"          type="string" stored="true" indexed="true" multiValued="false" required="true"/>
   <field name="uri"           type="string" stored="true" indexed="true" multiValued="false" required="true"/>
   <field name="pref_label"    type="string" stored="true" indexed="true" multiValued="false" required="true"/>
-  <field name="alt_label"     type="string" stored="true" indexed="true" multiValued="true"  required="false"/>
+  <field name="alt_labels"    type="string" stored="true" indexed="true" multiValued="true"  required="false"/>
   <field name="vocabulary"    type="string" stored="true" indexed="true" multiValued="false" required="true"/>
   <field name="term_type"     type="string" stored="true" indexed="true" multiValued="false" required="true"/>
   <field name="authority"     type="string" stored="true" indexed="true" multiValued="false" required="false"/>
@@ -71,9 +71,9 @@
   <copyField source="pref_label" dest="pref_label_suggest" />
   <copyField source="pref_label" dest="pref_label_suggest_edge" />
   <copyField source="pref_label" dest="pref_label_suggest_ngram" />
-  <copyField source="alt_label" dest="alt_label_suggest" />
-  <copyField source="alt_label" dest="alt_label_suggest_edge" />
-  <copyField source="alt_label" dest="alt_label_suggest_ngram" />
+  <copyField source="alt_labels" dest="alt_labels_suggest" />
+  <copyField source="alt_labels" dest="alt_labels_suggest_edge" />
+  <copyField source="alt_labels" dest="alt_labels_suggest_ngram" />
   <!-- sort copyFields -->
   <copyField source="pref_label" dest="pref_label_ssort" />
 

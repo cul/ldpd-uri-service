@@ -35,7 +35,7 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms', type: :request do
             "term": {
               "uri": "http://id.worldcat.org/fast/1161301/",
               "pref_label": "Unicorns",
-              "alt_label": [],
+              "alt_labels": [],
               "authority": "fast",
               "term_type": "external",
               "classification": "Horse",
@@ -101,7 +101,7 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms', type: :request do
           {
             "term": {
               "pref_label": "Minotaur (Greek mythological character)",
-              "alt_label": [],
+              "alt_labels": [],
               "uri": "http://id.worldcat.org/fast/1023481",
               "authority": "fast",
               "term_type": "external",
@@ -122,7 +122,7 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms', type: :request do
         post_with_auth '/api/v1/vocabularies/mythical_creatures/terms', params: {
           term: {
             pref_label: 'Hippogriff',
-            alt_label: ['Hippogryph'],
+            alt_labels: ['Hippogryph'],
             term_type: 'local',
             classification: 'Eagle'
           }
@@ -132,7 +132,7 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms', type: :request do
       it 'creates a term record' do
         expect(Term.count).to be 1
         expect(Term.first.uri).not_to be_blank
-        expect(Term.first.alt_label.first).to eql 'Hippogryph'
+        expect(Term.first.alt_labels.first).to eql 'Hippogryph'
       end
 
       it 'returns newly created term in json' do
@@ -140,7 +140,7 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms', type: :request do
           {
             "term": {
               "pref_label": "Hippogriff",
-              "alt_label": ["Hippogryph"],
+              "alt_labels": ["Hippogryph"],
               "term_type": "local",
               "authority": null,
               "classification": "Eagle",
@@ -176,7 +176,7 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms', type: :request do
           {
             "term": {
               "pref_label": "Hippogriff",
-              "alt_label": [],
+              "alt_labels": [],
               "authority": null,
               "term_type": "temporary",
               "harry_potter_reference": null,
@@ -268,7 +268,7 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms', type: :request do
   describe 'PATCH /api/v1/vocabularies/:string_key/terms/:uri' do
     include_context 'authentication required', 'patch', '/api/v1/vocabularies/mythical_creatures/terms/http%3A%2F%2Fid.worldcat.org%2Ffast%2F1161301%2F'
 
-    context 'when updating alt_label' do
+    context 'when updating alt_labels' do
       let(:term) do
         FactoryBot.create(:external_term,
                           vocabulary: vocabulary,
@@ -277,13 +277,13 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms', type: :request do
 
       before do
         patch_with_auth "/api/v1/vocabularies/mythical_creatures/terms/#{CGI.escape(term.uri)}", params: {
-          term: { alt_label: ['Uni'] }
+          term: { alt_labels: ['Uni'] }
         }
       end
 
       it 'updates alt_labels for term' do
         term.reload
-        expect(term.alt_label).to contain_exactly 'Uni'
+        expect(term.alt_labels).to contain_exactly 'Uni'
       end
 
       it 'preserves custom fields' do
@@ -297,7 +297,7 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms', type: :request do
             "term": {
               "uri": "http://id.worldcat.org/fast/1161301/",
               "pref_label": "Unicorns",
-              "alt_label": ["Uni"],
+              "alt_labels": ["Uni"],
               "authority": "fast",
               "term_type": "external",
               "harry_potter_reference": null,
