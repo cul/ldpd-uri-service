@@ -312,6 +312,41 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms', type: :request do
       end
     end
 
+    context 'when adding multiple alt_labels' do
+      let(:term) { FactoryBot.create(:external_term, vocabulary: vocabulary) }
+
+      before do
+        patch_with_auth "/api/v1/vocabularies/mythical_creatures/terms/#{CGI.escape(term.uri)}", params: {
+          term: { alt_labels: ['Uni', 'Horse with Horn'] }
+        }
+      end
+
+      it 'adds alt_labels for term' do
+        term.reload
+        expect(term.alt_labels).to match_array ['Uni', 'Horse with Horn']
+      end
+
+      it 'returns updated term' do
+        expect(response.body).to be_json_eql(%(
+          {
+            "term": {
+              "uri": "http://id.worldcat.org/fast/1161301/",
+              "pref_label": "Unicorns",
+              "alt_labels": ["Uni", "Horse with Horn"],
+              "authority": "fast",
+              "term_type": "external",
+              "harry_potter_reference": true,
+              "classification": null
+            }
+          }
+        )).excluding('uuid')
+      end
+
+      it 'returns 200' do
+        expect(response.status).to be 200
+      end
+    end
+
     context 'when updating term_type' do
       let(:term) { FactoryBot.create(:external_term, vocabulary: vocabulary) }
 

@@ -22,9 +22,9 @@
   <field name="timestamp"  type="date" indexed="true" stored="true" default="NOW" multiValued="false"/>
 
   <!-- Suggest fields -->
-  <dynamicField name="*_suggest" type="text_suggest" stored="false" indexed="true" multiValued="false"/>
-  <dynamicField name="*_suggest_edge" type="text_suggest_edge" stored="false" indexed="true" multiValued="false"/>
-  <dynamicField name="*_suggest_ngram" type="text_suggest_ngram" stored="false" indexed="true" multiValued="false"/>
+  <dynamicField name="*_suggest" type="text_suggest" stored="false" indexed="true" multiValued="true"/>
+  <dynamicField name="*_suggest_edge" type="text_suggest_edge" stored="false" indexed="true" multiValued="true"/>
+  <dynamicField name="*_suggest_ngram" type="text_suggest_ngram" stored="false" indexed="true" multiValued="true"/>
 
   <!-- string (_s...) -->
   <dynamicField name="*_si" type="string" stored="false" indexed="true" multiValued="false"/>
