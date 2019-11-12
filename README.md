@@ -1,7 +1,7 @@
 # URI Service (Application)
 [![Build Status](https://travis-ci.org/cul/ldpd-uri-service.svg?branch=master)](https://travis-ci.org/cul/ldpd-uri-service) [![Coverage Status](https://coveralls.io/repos/github/cul/ldpd-uri-service/badge.svg?branch=master)](https://coveralls.io/github/cul/ldpd-uri-service?branch=master)
 
-**URI Service** is a standalone Rails 5 application that creates/stores local and temporary terms and caches external URI terms. To start the application's only interface will be a JSON api, though we see expanding the application to include html pages for local terms.
+**URI Service** is a standalone Rails 5 application that creates/stores local and temporary terms and caches external URI terms. To start the application's only interface will be a RESTful JSON API, though we see expanding the application to include html pages for local terms.
 
 URI Service makes some assumptions about how URIs should be organized. A URI is always related to a vocabulary. A vocabulary has many URI terms. Multiple authorities might be represented within a vocabulary. A URI must be unique to a vocabulary, but a URI can appear in multiple vocabularies.
 
@@ -29,10 +29,10 @@ TODO
 Various configurations can be changed in `config/uri_service.yml`.
 
 ### API Keys
-TODO
+Valid API Keys are listed under `api_keys` in the configuration. Adding a new api key would require an application restart.
 
 ### Local URI HOST
-TODO
+The hostname that should be used when minting local URIs can be changed under `local_uri_host`.
 
 ### Commit After Save
 Our Solr configuration automatically soft commits all changes after a second and commits all changes after 30 seconds. This keeps things running smoothly in production environments because it prevents frequent, unnecessary commits to Solr. In test environments waiting a second for a document to appear is not ideal. Because of this there's a `commit_after_save` flag that can be set to `true` and this would commit each change immediately to Solr. This flag should only be set to `true` in development and test environments. The default value is `false`.
@@ -95,9 +95,11 @@ TODO
   _Body:_
   ```json
   {
-     "string_key": "names",
-     "label": "Names",
-     "custom_fields": {}
+    "vocabulary": {
+       "string_key": "names",
+       "label": "Names",
+       "custom_fields": {}
+    }
   }
   ```
 
@@ -106,7 +108,7 @@ TODO
 
   `POST /vocabularies`
 
-  `string_key` and 'label' are required parameters.
+  `string_key` and `label` are required parameters.
 
 - **Success Response**
 
@@ -115,10 +117,11 @@ TODO
   _Body:_
     ```json
     {
-      "string_key": "names",
-      "label": "Names",
-      "custom_fields": {}
-
+      "vocabulary": {
+        "string_key": "names",
+        "label": "Names",
+        "custom_fields": {}
+      }
     }
     ```
 
@@ -136,9 +139,11 @@ TODO
   _Body:_
   ```json
   {
-     "string_key": "names",
-     "label": "Names",
-     "custom_fields": {}
+     "vocabulary": {
+       "string_key": "names",
+       "label": "Names",
+       "custom_fields": {}
+     }
   }
   ```
 
@@ -154,16 +159,8 @@ TODO
   _Body:_ nil
 
 - **Error Response**
-  - If resource does not exist returns `404`
-  - If not successful return `500`
-
-
-#### Send back description/instruction
-- **Request**
-
-  `OPTIONS /vocabularies/`
-- **Success Response**
-  TODO
+  - 404: if resource does not exist
+  - 500: if not successful
 
 ### Vocabularies/Custom Fields
 #### Add Custom Field to Vocabulary
@@ -173,13 +170,23 @@ TODO
 
   _Required params:_ `field_key`, `label` and `data_type`
 
-  _Supported data_type:_ `string`, `integer`, `boolean`
+  _Supported values for data_type:_ `string`, `integer`, `boolean`
 
 - **Success Response**
 
   _Status:_ 201
 
-  _Body:_ NOT SURE
+  _Body:_
+
+  ```json
+   {
+     "custom_field": {
+       "field_key": "harry_potter_reference",
+       "data_type": "boolean",
+       "label": "Harry Potter Reference"
+     }
+   }
+  ```
 
 #### Update Custom Field
 - **Request**
@@ -194,7 +201,16 @@ TODO
 
   _Status:_ 200
 
-  _Body:_ NOT SURE
+  _Body:_
+  ```json
+    {
+      "custom_field": {
+        "field_key": "harry_potter_reference",
+        "label": "Wizarding World Reference",
+        "data_type": "boolean"
+      }
+    }
+  ```
 
 #### Delete Custom Field from Vocabulary
 - **Request**
@@ -207,7 +223,7 @@ TODO
 
   _Status:_ 200
 
-  _Body:_ none
+  _Body:_ nil
 
 
 ### Vocabularies/Terms
@@ -219,14 +235,14 @@ TODO
 
   Examples:
   ```
-  GET /vocabularies/:string_key/terms?page=1&per_page=20`
-  GET /vocabularies/:string_key/terms?q=smith&authority=naf&page=1&per_page=20`
+  GET /vocabularies/:string_key/terms?page=1&per_page=20
+  GET /vocabularies/:string_key/terms?q=smith&authority=naf&page=1&per_page=20
   GET /vocabularies/:string_key/terms?uri=https://creativecommons.org/publicdomain/zero/1.0/
-  GET /vocabularies/:string_key/terms?label=Smith # returns temp term b/c no uri was given
+  GET /vocabularies/:string_key/terms?pref_label=Smith
   GET /vocabularies/:string_key/terms?custom_field=123
   ```
 
-  Allowed query fields:
+  Allowed query/filter fields:
     - `q`: query term labels using fuzzy matching
     - `authority`: search by exact authority string
     - `uri`: search by exact uri string
@@ -242,7 +258,7 @@ TODO
 
 - **Success Response**
 
-  Sorted primarily by match score (in the case of a q search), secondarily by label alphabetical sort
+  Sorted primarily by match score (in the case of a q search), secondarily by alphabetical pref_label
 
   _Status:_ 200
 
@@ -255,14 +271,18 @@ TODO
     "terms": [
       {
         "pref_label": "Carla Galarza",
+        "alt_labels": [],
         "uri":"https://id.library.columbia.edu/term/1111-2222-3333-...",
-        "authority": "local",
+        "term_type": "local",
+        "authority": nil,
         "custom_field_1": "something"
       },
       {
         "pref_label": "Eric O'Hanlon",
-        "uri":"https://id.library.columbia.edu/term/4444-5555-6666...",
-        "authority": "local",
+        "alt_labels": [],
+        "uri": "https://id.library.columbia.edu/term/4444-5555-6666...",
+        "authority": nil,
+        "term_type": "local",
         "custom_field_2": "another thing"
       }
     ]
@@ -270,11 +290,12 @@ TODO
   ```
 
 #### Find Single Term
-- ** Request **
+- **Request**
 
   ` GET /vocabularies/:string_key/terms/:uri`
 
-- ** Success Response **
+  URI should be URL-encoded
+- **Success Response**
 
   _Status:_ 200
 
@@ -285,9 +306,9 @@ TODO
 
   `POST /vocabularies/:string_key/terms`
 
-  _Required params:_ term_type, label, uri (unless term_type = local or temporary)
+  _Required params:_ `term_type`, `pref_label`, `uri` (unless `term_type` = `local` or `temporary`)
 
-  _Optional params:_ authority, and any vocabulary-specific custom fields
+  _Optional params:_ `alt_labels`, `authority`, and any vocabulary-specific custom fields
 
 - **Success Response**
 
@@ -302,7 +323,9 @@ TODO
 
   URI should be URL-encoded
 
-  Can only change label and custom fields. URI and term_type can only be added with a create.
+  Can only change `pref_label`, `alt_label`, `authority` and custom fields.
+
+  `uri` and `term_type` can only be added when creating term.
 
 - **Success Response**
 
@@ -311,7 +334,7 @@ TODO
   _Body:_ JSON representation of object
 
 - **Error Response**
-  - return 404 (if object cannot be found)
+  - 404: if object cannot be found
 
 #### Delete term
 - **Request**
@@ -320,7 +343,7 @@ TODO
 
   URI should be URL-encoded.
 
-  Deletes the term for that vocabulary only.
+  Deletes the term for the vocabulary specified.
 - **Success Response**
 
   _Status:_ 204
@@ -328,47 +351,5 @@ TODO
   _Body:_ none
 
 - **Error Response**
-  - 404 if object not found
-  - 500 if error deleting object
-
-
-#### Send back instructions
-This endpoint will help define the terms returned and should help in the creating of forms.
-
-- **Request**
-  `OPTIONS /vocabularies/:string_key/terms`
-
-- **Success Response**
-  WORK IN PROGRESS
-
-  _Status:_ 200
-
-  _Body:_
-  ```json
-  {
-    "POST": {
-      "$schema": "http://json-schema.org/draft-07/schema#"
-      "description": "Create a term in a vocabulary",
-      "required" : ["pref_label"]
-      "properties": {
-        "pref_label": {
-          "type": "string"
-          "title": "Issue title."
-        },
-        "alt_labels": {
-          "type": "array",
-  	  "items": { "type": "string" },
-  	  "title": "Alternate Label",
-        },
-        "custom_field_1": {
-          "type": "string",
-          "title" "Custom Field 1"
-        },
-        "custom_field_2": {
-          "type": "integer",
-          "title": "Custom Field 2"
-        }
-      }
-    }
-  }
-  ```
+  - 404: if object not found
+  - 500: if error deleting object
