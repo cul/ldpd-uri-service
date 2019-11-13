@@ -16,7 +16,11 @@ class ApplicationController < ActionController::API
     def valid_vocabulary?
       if vocabulary.blank?
         render json: URIService::JSON.errors('Vocabulary not found.'), status: 404
-      elsif vocabulary.locked?
+      end
+    end
+
+    def unlocked_vocabulary?
+      if vocabulary.locked?
         render json: URIService::JSON.errors('Vocabulary is locked.'), status: 400
       end
     end

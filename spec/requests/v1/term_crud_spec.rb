@@ -73,6 +73,17 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms', type: :request do
         expect(response.status).to be 404
       end
     end
+
+    context 'when term is part of a locked vocabulary' do
+      before do
+        vocabulary.update(locked: true)
+        get_with_auth '/api/v1/vocabularies/mythical_creatures/terms/http%3A%2F%2Fid.worldcat.org%2Ffast%2F1161301%2F'
+      end
+
+      it 'returns 200' do
+        expect(response.status).to be 200
+      end
+    end
   end
 
   describe 'POST /api/v1/vocabularies/:string_key/terms' do

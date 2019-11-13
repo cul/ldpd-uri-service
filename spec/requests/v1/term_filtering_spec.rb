@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe 'Filtering terms', type: :request do
+  let(:vocab) { FactoryBot.create(:vocabulary, :with_custom_field) }
+
   shared_examples 'json contains external term' do
     it 'contains external term' do
       expect(response.body).to include_json(
@@ -53,9 +55,20 @@ RSpec.describe 'Filtering terms', type: :request do
   end
 
   before do
-    unicorn = FactoryBot.create(:external_term, alt_labels: ['Uni'])
-    FactoryBot.create(:local_term, vocabulary: unicorn.vocabulary)
-    FactoryBot.create(:temp_term, vocabulary: unicorn.vocabulary)
+    FactoryBot.create(:external_term, alt_labels: ['Uni'], vocabulary: vocab)
+    FactoryBot.create(:local_term, vocabulary: vocab)
+    FactoryBot.create(:temp_term, vocabulary: vocab)
+  end
+
+  context 'when terms are part of a closed vocabulary' do
+    before do
+      vocab.update(locked: true)
+      get_with_auth '/api/v1/vocabularies/mythical_creatures/terms'
+    end
+
+    it 'returns 200' do
+      expect(response.status).to be 200
+    end
   end
 
   context 'with no filters' do
