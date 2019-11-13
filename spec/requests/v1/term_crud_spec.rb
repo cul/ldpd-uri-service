@@ -73,6 +73,17 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms', type: :request do
         expect(response.status).to be 404
       end
     end
+
+    context 'when term is part of a locked vocabulary' do
+      before do
+        vocabulary.update(locked: true)
+        get_with_auth '/api/v1/vocabularies/mythical_creatures/terms/http%3A%2F%2Fid.worldcat.org%2Ffast%2F1161301%2F'
+      end
+
+      it 'returns 200' do
+        expect(response.status).to be 200
+      end
+    end
   end
 
   describe 'POST /api/v1/vocabularies/:string_key/terms' do
@@ -263,6 +274,28 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms', type: :request do
         ))
       end
     end
+
+    context 'when create a term on a locked vocabulary' do
+      before do
+        vocabulary.update(locked: true)
+        post_with_auth '/api/v1/vocabularies/mythical_creatures/terms', params: {
+          term: {
+            pref_label: 'Hippogriff',
+            term_type: 'temporary',
+          }
+        }
+      end
+
+      it 'return 400' do
+        expect(response.status).to be 400
+      end
+
+      it 'returns error in json' do
+        expect(response.body).to be_json_eql(%(
+          { "errors": [{ "title": "Vocabulary is locked." }] }
+        ))
+      end
+    end
   end
 
   describe 'PATCH /api/v1/vocabularies/:string_key/terms/:uri' do
@@ -377,15 +410,35 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms', type: :request do
         expect(response.status).to be 404
       end
     end
+
+    context 'when updating a term on a locked vocabulary' do
+      let(:term) { FactoryBot.create(:external_term, vocabulary: vocabulary) }
+
+      before do
+        vocabulary.update(locked: true)
+        patch_with_auth "/api/v1/vocabularies/mythical_creatures/terms/#{CGI.escape(term.uri)}", params: {
+          term: { alt_labels: ['Uni'] }
+        }
+      end
+
+      it 'returns 400' do
+        expect(response.status).to be 400
+      end
+
+      it 'returns error in json' do
+        expect(response.body).to be_json_eql(%(
+          { "errors": [{ "title": "Vocabulary is locked." }] }
+        ))
+      end
+    end
   end
 
   describe 'DELETE /api/v1/vocabularies/:string_key/terms/:uri' do
     include_context 'authentication required', 'delete', '/api/v1/vocabularies/mythical_creatures/terms/http%3A%2F%2Fid.worldcat.org%2Ffast%2F1161301%2F'
+    let(:uri) { 'https://example.com/unicorns' }
+    let(:term) { FactoryBot.create(:external_term, uri: uri, vocabulary: vocabulary) }
 
     context 'when deleting term' do
-      let(:uri) { 'https://example.com/unicorns' }
-      let(:term) { FactoryBot.create(:external_term, uri: uri, vocabulary: vocabulary) }
-
       before do
         delete_with_auth "/api/v1/vocabularies/mythical_creatures/terms/#{CGI.escape(term.uri)}"
       end
@@ -408,7 +461,22 @@ RSpec.describe 'CRUD /api/v1/vocabularies/:string_key/terms', type: :request do
         expect(response.status).to be 404
       end
     end
-  end
 
-  describe 'OPTIONS /api/v1/vocabularies/:string_key/terms'
+    context 'when deleting a term on a locked vocabulary' do
+      before do
+        vocabulary.update(locked: true)
+        delete_with_auth "/api/v1/vocabularies/mythical_creatures/terms/#{CGI.escape(term.uri)}"
+      end
+
+      it 'returns 400' do
+        expect(response.status).to be 400
+      end
+
+      it 'returns error in json' do
+        expect(response.body).to be_json_eql(%(
+          { "errors": [{ "title": "Vocabulary is locked." }] }
+        ))
+      end
+    end
+  end
 end

@@ -1,6 +1,7 @@
 module V1
   class TermsController < ApplicationController
     before_action :valid_vocabulary?
+    before_action :unlocked_vocabulary?, only: [:create, :update, :destroy]
 
     # GET /vocabularies/:string_key/terms
     def index

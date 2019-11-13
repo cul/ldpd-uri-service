@@ -1,6 +1,6 @@
 module V1
   class CustomFieldsController < ApplicationController
-    before_action :valid_vocabulary?, :field_key_present?
+    before_action :valid_vocabulary?, :unlocked_vocabulary?, :field_key_present?
 
     def create
       if vocabulary.custom_fields.key?(create_params[:field_key])

@@ -19,6 +19,12 @@ class ApplicationController < ActionController::API
       end
     end
 
+    def unlocked_vocabulary?
+      if vocabulary.locked?
+        render json: URIService::JSON.errors('Vocabulary is locked.'), status: 400
+      end
+    end
+
     def ensure_json_request
       return if request.format == :json
       head :not_acceptable

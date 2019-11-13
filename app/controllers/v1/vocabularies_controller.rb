@@ -55,16 +55,14 @@ module V1
       end
     end
 
-    def options; end
-
     private
 
       def create_params
-        params.require(:vocabulary).permit(:string_key, :label)
+        params.require(:vocabulary).permit(:string_key, :label, :locked)
       end
 
       def update_params
-        params.require(:vocabulary).permit(:label)
+        params.require(:vocabulary).permit(:label, :locked)
       end
   end
 end

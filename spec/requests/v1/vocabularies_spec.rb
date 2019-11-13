@@ -16,8 +16,8 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
         'per_page' => 20,
         'total_records' => 2,
         'vocabularies' => [
-          { 'string_key' => 'mythical_creatures', 'label' => 'Mythical Creatures', 'custom_fields' => {} },
-          { 'string_key' => 'names', 'label' => 'Names', 'custom_fields' => {} }
+          { 'string_key' => 'mythical_creatures', 'label' => 'Mythical Creatures', 'locked' => false, 'custom_fields' => {} },
+          { 'string_key' => 'names', 'label' => 'Names', 'locked' => false, 'custom_fields' => {} }
         ]
       )
     end
@@ -29,8 +29,8 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
         {
           "page": 1, "per_page": 2, "total_records": 3,
           "vocabularies": [
-            { "string_key": "animals", "label": "Animals", "custom_fields": {} },
-            { "string_key": "mythical_creatures", "label": "Mythical Creatures", "custom_fields": {} }
+            { "string_key": "animals", "label": "Animals", "locked": false, "custom_fields": {} },
+            { "string_key": "mythical_creatures", "label": "Mythical Creatures", "locked": false, "custom_fields": {} }
           ]
         }
       ))
@@ -56,6 +56,7 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
           "vocabulary": {
             "string_key": "mythical_creatures",
             "label": "Mythical Creatures",
+            "locked": false,
             "custom_fields": {}
           }
         }
@@ -75,7 +76,7 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
 
     context 'when successfully creating a new vocabulary' do
       before do
-        post_with_auth '/api/v1/vocabularies', params: { vocabulary: { string_key: 'collections', label: 'Collections' } }
+        post_with_auth '/api/v1/vocabularies', params: { vocabulary: { string_key: 'collections', label: 'Collections', locked: true } }
       end
 
       it 'creates a new vocabulary record' do
@@ -89,6 +90,7 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
             "vocabulary": {
               "string_key": "collections",
               "label": "Collections",
+              "locked": true,
               "custom_fields": {}
             }
           }
@@ -159,6 +161,7 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
             "vocabulary": {
               "string_key": "mythical_creatures",
               "label": "FAST Mythical Creatures",
+              "locked": false,
               "custom_fields": {}
             }
           }
@@ -181,6 +184,7 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
             "vocabulary": {
               "string_key": "mythical_creatures",
               "label": "Mythical Creatures",
+              "locked": false,
               "custom_fields": {}
             }
           }
@@ -232,10 +236,5 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
         expect(response.status).to be 404
       end
     end
-  end
-
-  describe 'OPTIONS /vocabularies/:string_key' do
-    it 'returns all fields for vocabularies'
-    it 'returns custom fields for vocabularies'
   end
 end

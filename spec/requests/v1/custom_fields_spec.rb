@@ -145,16 +145,36 @@ RSpec.describe 'Custom Fields Requests', type: :request do
         expect(response.status).to be 400
       end
     end
+
+    context 'when creating custom field within a locked vocabulary' do
+      before do
+        vocabulary.update(locked: true)
+        post_with_auth "/api/v1/vocabularies/#{vocabulary.string_key}/custom_fields",
+          params: { custom_field: { field_key: 'harry_potter_reference', label: 'Harry Potter Reference', data_type: 'boolean' } }
+      end
+
+      it 'returns 400' do
+        expect(response.status).to be 400
+      end
+
+      it 'returns error in json' do
+        expect(response.body).to be_json_eql(%(
+          { "errors": [{ "title": "Vocabulary is locked." }] }
+        ))
+      end
+    end
   end
 
   describe 'PATCH /api/v1/vocabularies/:string_key/custom_fields/:field_key' do
     include_examples 'authentication required', 'patch', '/api/v1/vocabularies/mythical_creatures/custom_fields/harry_potter_reference'
 
+    before do
+      vocabulary.custom_fields = { 'harry_potter_reference' => { data_type: 'boolean', label: 'Harry Potter Reference' } }
+      vocabulary.save
+    end
+
     context 'when updating custom field that exists' do
       before do
-        vocabulary.custom_fields = { 'harry_potter_reference' => { data_type: 'boolean', label: 'Harry Potter Reference' } }
-        vocabulary.save
-
         patch_with_auth "/api/v1/vocabularies/#{vocabulary.string_key}/custom_fields/harry_potter_reference",
               params: { custom_field: { label: 'Wizarding World Reference' } }
       end
@@ -185,9 +205,6 @@ RSpec.describe 'Custom Fields Requests', type: :request do
 
     context 'when updating a custom field with an empty label' do
       before do
-        vocabulary.custom_fields = { 'harry_potter_reference' => { data_type: 'boolean', label: 'Harry Potter Reference' } }
-        vocabulary.save
-
         patch_with_auth "/api/v1/vocabularies/#{vocabulary.string_key}/custom_fields/harry_potter_reference",
               params: { custom_field: { label: '' } }
       end
@@ -210,7 +227,7 @@ RSpec.describe 'Custom Fields Requests', type: :request do
 
     context 'when updating custom field that does not exist' do
       before do
-        patch_with_auth "/api/v1/vocabularies/#{vocabulary.string_key}/custom_fields/harry_potter_reference",
+        patch_with_auth "/api/v1/vocabularies/#{vocabulary.string_key}/custom_fields/not_valid",
               params: { custom_field: { label: 'Wizarding World Reference' } }
       end
 
@@ -226,7 +243,25 @@ RSpec.describe 'Custom Fields Requests', type: :request do
 
       it 'does not add custom fields' do
         vocabulary.reload
-        expect(vocabulary.custom_fields).to be_blank
+        expect(vocabulary.custom_fields.keys).not_to include 'not_valid'
+      end
+    end
+
+    context 'when updating custom field within a locked vocabulary' do
+      before do
+        vocabulary.update(locked: true)
+        patch_with_auth "/api/v1/vocabularies/#{vocabulary.string_key}/custom_fields/harry_potter_reference",
+              params: { custom_field: { label: 'Wizarding World Reference' } }
+      end
+
+      it 'returns 400' do
+        expect(response.status).to be 400
+      end
+
+      it 'returns error in json' do
+        expect(response.body).to be_json_eql(%(
+          { "errors": [{ "title": "Vocabulary is locked." }] }
+        ))
       end
     end
   end
@@ -274,6 +309,23 @@ RSpec.describe 'Custom Fields Requests', type: :request do
           'harry_potter_reference' => { data_type: 'boolean', label: 'Harry Potter Reference' },
           'classification'         => { data_type: 'string', label: 'Classification' }
         )
+      end
+    end
+
+    context 'when deleting custom field within a locked vocabulary' do
+      before do
+        vocabulary.update(locked: true)
+        delete_with_auth "/api/v1/vocabularies/#{vocabulary.string_key}/custom_fields/harry_potter_reference"
+      end
+
+      it 'returns 400' do
+        expect(response.status).to be 400
+      end
+
+      it 'returns error in json' do
+        expect(response.body).to be_json_eql(%(
+          { "errors": [{ "title": "Vocabulary is locked." }] }
+        ))
       end
     end
   end
