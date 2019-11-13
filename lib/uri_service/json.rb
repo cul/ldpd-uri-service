@@ -9,7 +9,7 @@ module URIService
 
     # Converts Vocabulary object to expected json output
     def self.vocabulary(obj, request: true)
-      output = obj.as_json(only: [:string_key, :label, :custom_fields])
+      output = obj.as_json(only: [:string_key, :label, :locked, :custom_fields])
       request ? { vocabulary: output } : output
     end
 

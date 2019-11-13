@@ -22,6 +22,9 @@ Used when you want to add a value to your URI Service datastore, but have no aut
 #### Custom Fields
 TODO
 
+#### Locked/Unlocked Vocabulary
+A vocabulary can be locked by setting the `locked` property to true. If a vocabulary is locked, terms within that vocabulary cannot be created, updated or deleted. Custom fields also cannot be created, updated or deleted. To unlock a vocabulary, simply set `locked` to false.
+
 ## Installation
 TODO
 
@@ -67,11 +70,13 @@ TODO
       {
         "string_key": "collections" ,
         "label": "Collections",
+        "locked": false,
         "custom_fields": {}
       },
       {
         "string_key": "name" ,
         "label": "Names",
+        "locked": false,
         "custom_fields": {
           "name_type": {
             "label": "Name Type",
@@ -98,6 +103,7 @@ TODO
     "vocabulary": {
        "string_key": "names",
        "label": "Names",
+       "locked": false,
        "custom_fields": {}
     }
   }
@@ -110,6 +116,8 @@ TODO
 
   `string_key` and `label` are required parameters.
 
+  `locked` is an optional parameter.
+
 - **Success Response**
 
   _Status:_ `201`
@@ -120,6 +128,7 @@ TODO
       "vocabulary": {
         "string_key": "names",
         "label": "Names",
+        "locked": false,
         "custom_fields": {}
       }
     }
@@ -130,7 +139,7 @@ TODO
 
   `PATCH /vocabularies/:string_key`
 
-  Only a vocabulary's `label` can be updated, `string_key` cannot be changed.
+  Only a vocabulary's `label` and `locked` can be updated, `string_key` cannot be changed.
 
 - **Success Response**
 
@@ -142,6 +151,7 @@ TODO
      "vocabulary": {
        "string_key": "names",
        "label": "Names",
+       "locked": false,
        "custom_fields": {}
      }
   }
