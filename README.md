@@ -7,7 +7,7 @@ URI Service makes some assumptions about how URIs should be organized. A URI is 
 
 Vocabularies allow the addition of custom fields for all terms that are stored within its scope. Different vocabularies can define different custom fields.
 
-In order to use the JSON api, URI Service requires token authentication. URI Service does not provide granular authorization. The application that uses the api should control authorization in any way it deems necessary.
+In order to use the JSON API, URI Service requires token authentication. URI Service does not provide granular authorization. The application that consumes the API should control authorization in anyway it deems necessary.
 
 ## Definitions
 #### External Term
@@ -55,7 +55,7 @@ TODO
 
 - **Success Response**
 
-  Sorts vocabularies alphabetically by label. Defaults to `page = 1` and `per_page = 20`.
+  Sorts vocabularies alphabetically by label. Defaults to `offset = 0` and `limit = 20`.
 
   _Status:_ 200
 
@@ -63,8 +63,8 @@ TODO
 
   ```json
   {
-    "page": 1,
-    "per_page": 10,
+    "offset": 0,
+    "limit": 10,
     "total_results": 2,
     "vocabularies": [
       {
@@ -275,8 +275,8 @@ TODO
   _Body:_
   ```json
   {
-    "page": 1,
-    "per_page": 25,
+    "offset": 0,
+    "limit": 25,
     "total records": 55,
     "terms": [
       {

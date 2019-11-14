@@ -2,10 +2,9 @@ module V1
   class VocabulariesController < ApplicationController
     # GET /vocabularies
     def index
-      # Kaminari takes care of converting page and per_page parameters to defaults if they are invalid.
-      vocabs = Vocabulary.order(:label).page(params[:page]).per(params[:per_page])
+      vocabs = Vocabulary.order(:label).offset(offset).limit(limit)
       render json: URIService::JSON.vocabularies(vocabs)
-                                   .merge(page: vocabs.current_page, per_page: vocabs.current_per_page, total_records: vocabs.total_count)
+                                   .merge(limit: limit, offset: offset, total_records: Vocabulary.all.size)
     end
 
     # GET /vocabularies/:string_key

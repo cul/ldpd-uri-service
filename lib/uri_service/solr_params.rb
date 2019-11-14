@@ -7,7 +7,7 @@ module URIService
         q: nil,
         qt: 'search',
         fq: [],
-        rows: URIService::DEFAULT_PER_PAGE,
+        rows: URIService::DEFAULT_LIMIT,
         start: 0
       }
     end
@@ -19,6 +19,11 @@ module URIService
 
     def rows(num)
       @parameters[:rows] = num
+      self
+    end
+
+    def start(num)
+      @parameters[:start] = num
       self
     end
 
