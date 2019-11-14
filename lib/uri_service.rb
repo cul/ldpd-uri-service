@@ -7,8 +7,8 @@ module URIService
     'boolean' => '_bi'
   }.freeze
 
-  DEFAULT_PER_PAGE = 20
-  MAX_PER_PAGE     = 500
+  DEFAULT_LIMIT = 20
+  MAX_LIMIT     = 500
 
   def self.solr
     self.solr_connection = URIService::Solr.new unless solr_connection

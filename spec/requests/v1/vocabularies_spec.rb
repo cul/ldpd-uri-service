@@ -12,8 +12,8 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
     it 'returns all vocabularies' do
       get_with_auth '/api/v1/vocabularies'
       expect(JSON.parse(response.body)).to match(
-        'page' => 1,
-        'per_page' => 20,
+        'offset' => 0,
+        'limit' => 20,
         'total_records' => 2,
         'vocabularies' => [
           { 'string_key' => 'mythical_creatures', 'label' => 'Mythical Creatures', 'locked' => false, 'custom_fields' => {} },
@@ -24,10 +24,10 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
 
     it 'paginates results' do
       FactoryBot.create(:vocabulary, string_key: 'animals', label: 'Animals')
-      get_with_auth '/api/v1/vocabularies?per_page=2&page=1'
+      get_with_auth '/api/v1/vocabularies?limit=2&offset=0'
       expect(response.body).to be_json_eql(%(
         {
-          "page": 1, "per_page": 2, "total_records": 3,
+          "offset": 0, "limit": 2, "total_records": 3,
           "vocabularies": [
             { "string_key": "animals", "label": "Animals", "locked": false, "custom_fields": {} },
             { "string_key": "mythical_creatures", "label": "Mythical Creatures", "locked": false, "custom_fields": {} }
@@ -36,10 +36,10 @@ RSpec.describe '/api/v1/vocabularies', type: :request do
       ))
     end
 
-    it 'sets per_page to max_per_page value when value exceeds max_per_page' do
-      get_with_auth '/api/v1/vocabularies?page=1&per_page=501'
+    it 'sets limit to max_limit value when value exceeds max_limit' do
+      get_with_auth '/api/v1/vocabularies?offset=0&limit=501'
       expect(response.body).to be_json_eql(%(
-        { "page": 1, "per_page": 500, "total_records": 2 }
+        { "offset": 0, "limit": 500, "total_records": 2 }
       )).excluding('vocabularies')
     end
   end

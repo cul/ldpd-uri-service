@@ -54,8 +54,8 @@ module URIService
       per_page = solr_response['responseHeader']['params']['rows'].to_i
 
       {
-        page: current_page(start, per_page),
-        per_page: per_page,
+        limit: solr_response['responseHeader']['params']['rows'].to_i,
+        offset: solr_response['response']['start'].to_i,
         total_records: solr_response['response']['numFound'],
         terms: solr_response['response']['docs'].map { |d| term(d, request: false) }
       }

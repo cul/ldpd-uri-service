@@ -24,12 +24,12 @@ module V1
       operation :get do
         key :description, 'Returns paginated vocabularies'
 
-        parameter name: :per_page, in: :query, type: :number,
-                  minimum: 1, maximum: URIService::MAX_PER_PAGE,
+        parameter name: :limit, in: :query, type: :number,
+                  default: 20, minimum: 1, maximum: URIService::MAX_LIMIT,
                   description: 'Number of results per page'
 
-        parameter name: :page, in: :query, type: :number,
-                  minimum: 1,
+        parameter name: :offset, in: :query, type: :number,
+                  minimum: 0,
                   description: 'Page of paginated results'
       end
 
@@ -108,12 +108,12 @@ module V1
         operation :get do # search
           key :description, "Search for terms within a #{v.string_key} vocabulary"
 
-          parameter name: :per_page, in: :query, type: :number,
-                    default: 20, minimum: 1, maximum: URIService::MAX_PER_PAGE,
+          parameter name: :limit, in: :query, type: :number,
+                    default: 20, minimum: 1, maximum: URIService::MAX_LIMIT,
                     description: 'Number of results per page'
 
-          parameter name: :page, in: :query, type: :number,
-                    default: 1, minimum: 1,
+          parameter name: :offset, in: :query, type: :number,
+                    default: 0, minimum: 0,
                     description: 'Page of paginated results'
 
           parameter name: :q, in: :query, type: :string

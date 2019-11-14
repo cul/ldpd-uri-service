@@ -9,6 +9,19 @@ class ApplicationController < ActionController::API
   end
 
   private
+    def limit
+      limit = (params[:limit].blank?) ? URIService::DEFAULT_LIMIT : params[:limit].to_i
+      limit = URIService::DEFAULT_LIMIT if limit < 1
+      limit = URIService::MAX_LIMIT     if limit > URIService::MAX_LIMIT
+      limit
+    end
+
+    def offset
+      offset = (params[:offset].blank?) ? 0 : params[:offset].to_i
+      offset = 0 if offset < 0
+      offset
+    end
+
     def vocabulary
       @vocabulary ||= Vocabulary.find_by(string_key: params['vocabulary_string_key'])
     end

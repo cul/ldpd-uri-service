@@ -45,10 +45,10 @@ RSpec.describe 'Filtering terms', type: :request do
     end
   end
 
-  shared_examples 'json includes pagination' do |page, per_page, total_records|
+  shared_examples 'json includes pagination' do |offset, limit, total_records|
     it 'returns pagination information' do
       expect(response.body).to be_json_eql(
-        { page: page, per_page: per_page, total_records: total_records }.to_json
+        { offset: offset, limit: limit, total_records: total_records }.to_json
       ).excluding('terms')
       expect(response.body).to have_json_size(total_records).at_path('terms')
     end
@@ -75,7 +75,7 @@ RSpec.describe 'Filtering terms', type: :request do
     include_context 'json contains temporary term'
     include_context 'json contains local term'
     include_context 'json contains external term'
-    include_context 'json includes pagination', 1, 20, 3
+    include_context 'json includes pagination', 0, 20, 3
 
     before do
       get_with_auth '/api/v1/vocabularies/mythical_creatures/terms'
@@ -88,7 +88,7 @@ RSpec.describe 'Filtering terms', type: :request do
 
   context 'by query' do
     include_context 'json contains local term'
-    include_context 'json includes pagination', 1, 20, 1
+    include_context 'json includes pagination', 0, 20, 1
 
     before do
       get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?q=dragon'
@@ -97,7 +97,7 @@ RSpec.describe 'Filtering terms', type: :request do
 
   context 'by exact authority string' do
     include_context 'json contains external term'
-    include_context 'json includes pagination', 1, 20, 1
+    include_context 'json includes pagination', 0, 20, 1
 
     before do
       get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?authority=fast'
@@ -106,7 +106,7 @@ RSpec.describe 'Filtering terms', type: :request do
 
   context 'by exact uri string' do
     include_context 'json contains external term'
-    include_context 'json includes pagination', 1, 20, 1
+    include_context 'json includes pagination', 0, 20, 1
 
     before do
       get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?uri=http%3A%2F%2Fid.worldcat.org%2Ffast%2F1161301%2F'
@@ -115,7 +115,7 @@ RSpec.describe 'Filtering terms', type: :request do
 
   context 'by exact pref_label' do
     include_context 'json contains temporary term'
-    include_context 'json includes pagination', 1, 20, 1
+    include_context 'json includes pagination', 0, 20, 1
 
     before do
       get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?pref_label=Yeti'
@@ -124,7 +124,7 @@ RSpec.describe 'Filtering terms', type: :request do
 
   context 'by exact alt_labels' do
     include_context 'json contains external term'
-    include_context 'json includes pagination', 1, 20, 1
+    include_context 'json includes pagination', 0, 20, 1
 
     before do
       get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?alt_labels=Uni'
@@ -133,7 +133,7 @@ RSpec.describe 'Filtering terms', type: :request do
 
   context `by exact term_type` do
     include_context 'json contains temporary term'
-    include_context 'json includes pagination', 1, 20, 1
+    include_context 'json includes pagination', 0, 20, 1
 
     before do
       get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?term_type=temporary'
@@ -143,7 +143,7 @@ RSpec.describe 'Filtering terms', type: :request do
   context 'by custom field' do
     include_context 'json contains external term'
     include_context 'json contains local term'
-    include_context 'json includes pagination', 1, 20, 2
+    include_context 'json includes pagination', 0, 20, 2
 
     before do
       get_with_auth '/api/v1/vocabularies/mythical_creatures/terms?harry_potter_reference=true'
@@ -157,7 +157,7 @@ RSpec.describe 'Filtering terms', type: :request do
 
     it 'returns no results' do
       expect(response.body).to be_json_eql(
-        '{ "page":1, "per_page":20, "total_records":0, "terms":[] }'
+        '{ "offset":0, "limit":20, "total_records":0, "terms":[] }'
       )
     end
   end
