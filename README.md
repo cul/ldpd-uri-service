@@ -1,3 +1,5 @@
+> :warning: &nbsp;This repository is no longer maintained!  This is an old, archived project that was integrated into Hyacinth (https://github.com/cul/ldpd-hyacinth) instead of running as a standalone service.
+
 # URI Service (Application)
 [![Build Status](https://travis-ci.org/cul/ldpd-uri-service.svg?branch=master)](https://travis-ci.org/cul/ldpd-uri-service) [![Coverage Status](https://coveralls.io/repos/github/cul/ldpd-uri-service/badge.svg?branch=master)](https://coveralls.io/github/cul/ldpd-uri-service?branch=master)
 
